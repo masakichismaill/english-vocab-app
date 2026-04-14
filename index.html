@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>英単語帳</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>英単語帳</h1>
+  <p>単語を登録して、効率よく暗記しよう</p>
+</header>
+
+<div class="container">
+
+  <!-- ボタン行：単語追加 & クイズ開始 -->
+  <button class="open-form-btn" id="openFormBtn" onclick="handleFormToggle()">
+    ＋ 単語を追加する
+  </button>
+  <button class="open-quiz-btn" id="openQuizBtn" onclick="handleQuizToggle()">
+    クイズを始める
+  </button>
+
+  <!-- クイズセクション -->
+  <div class="quiz-section" id="quizSection" style="display: none;">
+    <h2 id="quizTitle">クイズ</h2>
+    <!-- モード選択エリア（クイズ開始前に表示） -->
+    <div id="quizModeArea"></div>
+    <!-- クイズ本体エリア（出題中に表示） -->
+    <div class="quiz-message" id="quizMessage"></div>
+    <div id="quizContent"></div>
+  </div>
+
+  <!-- 登録・編集フォーム -->
+  <div class="form-section" id="formSection" style="display: none;">
+    <h2 id="formTitle">新しい単語を追加</h2>
+
+    <!-- 英単語 -->
+    <div class="form-group">
+      <label for="inputWord">英単語<span class="required-mark">*</span></label>
+      <input type="text" id="inputWord" placeholder="例: vocabulary">
+      <div class="error-msg" id="wordError"></div>
+    </div>
+
+    <!-- 品詞 -->
+    <div class="form-group">
+      <label for="inputPartOfSpeech">品詞</label>
+      <select id="inputPartOfSpeech">
+        <option value="noun">noun（名詞）</option>
+        <option value="verb">verb（動詞）</option>
+        <option value="adjective">adjective（形容詞）</option>
+        <option value="adverb">adverb（副詞）</option>
+        <option value="preposition">preposition（前置詞）</option>
+        <option value="conjunction">conjunction（接続詞）</option>
+        <option value="pronoun">pronoun（代名詞）</option>
+        <option value="phrase">phrase（熟語）</option>
+        <option value="other">other（その他）</option>
+      </select>
+    </div>
+
+    <!-- 日本語の意味（複数） -->
+    <div class="form-group">
+      <label>日本語の意味<span class="required-mark">*</span></label>
+      <div class="dynamic-input-list" id="meaningsContainer"></div>
+      <button class="add-item-btn" onclick="addMeaningInput()">＋ 意味を追加</button>
+      <div class="error-msg" id="meaningError"></div>
+    </div>
+
+    <!-- 例文（複数） -->
+    <div class="form-group">
+      <label>例文</label>
+      <div class="dynamic-input-list" id="examplesContainer"></div>
+      <button class="add-item-btn" onclick="addExampleInput()">＋ 例文を追加</button>
+    </div>
+
+    <!-- 画像（品詞ごとに1枚・省略可） -->
+    <div class="form-group">
+      <label>画像（省略可・品詞ごとに1枚）</label>
+      <div class="image-form-area">
+        <div class="image-preview-box" id="imagePreviewBox">
+          <span class="no-image-text" id="noImageText">画像なし</span>
+          <img id="imagePreview" alt="プレビュー" style="display:none">
+        </div>
+        <div class="image-form-buttons">
+          <label class="image-select-btn">
+            画像を選ぶ
+            <input type="file" id="imageFileInput" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+          </label>
+          <button type="button" class="image-action-btn" id="imageActionBtn" onclick="handleImageAction()" style="display:none">削除</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- フォームボタン -->
+    <div class="form-buttons">
+      <button class="btn-primary" onclick="saveWord()">保存する</button>
+      <button class="btn-cancel" onclick="cancelForm()">キャンセル</button>
+    </div>
+  </div>
+
+  <!-- コントロールセクション -->
+  <div class="controls-section">
+    <!-- 検索・並び替え -->
+    <div class="search-sort-row">
+      <input
+        type="text"
+        class="search-input"
+        id="searchInput"
+        placeholder="英単語・意味で検索..."
+        oninput="renderWordList()"
+      >
+      <select class="sort-select" id="sortSelect" onchange="renderWordList()">
+        <option value="newest">新しい順</option>
+        <option value="oldest">古い順</option>
+        <option value="az">A-Z順</option>
+        <option value="pos">品詞順</option>
+      </select>
+    </div>
+
+    <!-- フィルターボタン -->
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('all', this)">すべて</button>
+      <button class="filter-btn" onclick="setFilter('favorite', this)">★ お気に入り</button>
+      <button class="filter-btn" onclick="setFilter('weak', this)">！ 苦手</button>
+    </div>
+
+    <!-- 意味表示トグル -->
+    <div class="meaning-toggle-row">
+      <label class="toggle-switch">
+        <input type="checkbox" id="meaningToggle" checked onchange="renderWordList()">
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="toggle-label">日本語の意味を表示する</span>
+    </div>
+
+
+    <!-- 件数表示 -->
+    <div class="word-count-text" id="wordCountText"></div>
+  </div>
+
+  <!-- 単語カード一覧 -->
+  <div class="word-card-list" id="wordCardList"></div>
+
+</div>
+
+<!-- 削除確認モーダル -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <h3>単語を削除しますか？</h3>
+    <p id="deleteModalText">この操作は取り消せません。</p>
+    <div class="modal-buttons">
+      <button class="btn-modal-cancel" onclick="closeDeleteModal()">キャンセル</button>
+      <button class="btn-modal-delete" onclick="confirmDelete()">削除する</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+<!-- コピー完了トースト -->
+<div class="copy-toast" id="copyToast"></div>
+
+</body>
+</html>
