@@ -1,0 +1,4113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>英単語帳</title>
+  <style>
+    /* ===========================
+       リセット・ベーススタイル
+    =========================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f0f4f8;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* ===========================
+       ヘッダー
+    =========================== */
+    header {
+      background: linear-gradient(135deg, #2d7dd2, #3ab5a0);
+      color: white;
+      padding: 18px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    header p {
+      font-size: 0.88rem;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    /* ===========================
+       コンテナ
+    =========================== */
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    /* ===========================
+       単語追加ボタン
+    =========================== */
+    .open-form-btn {
+      background: #2d7dd2;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      transition: background 0.2s;
+      display: inline-block;
+    }
+
+    .open-form-btn:hover {
+      background: #2568b8;
+    }
+
+    /* ===========================
+       フォームセクション
+    =========================== */
+    .form-section {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.09);
+    }
+
+    .form-section h2 {
+      font-size: 1.1rem;
+      color: #2d7dd2;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e8f1fb;
+    }
+
+    /* フォームグループ */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .required-mark {
+      color: #e55;
+      margin-left: 2px;
+    }
+
+    .form-group input[type="text"],
+    .form-group select {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+      background: white;
+      color: #333;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #2d7dd2;
+      box-shadow: 0 0 0 3px rgba(45, 125, 210, 0.1);
+    }
+
+    /* エラーメッセージ */
+    .error-msg {
+      color: #e55;
+      font-size: 0.82rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    /* 動的入力リスト */
+    .dynamic-input-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .dynamic-input-item {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dynamic-input-item input[type="text"] {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      transition: border-color 0.2s;
+    }
+
+    .dynamic-input-item input[type="text"]:focus {
+      outline: none;
+      border-color: #2d7dd2;
+      box-shadow: 0 0 0 3px rgba(45, 125, 210, 0.1);
+    }
+
+    .remove-item-btn {
+      background: #fde8e8;
+      color: #e55;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 1rem;
+      flex-shrink: 0;
+      transition: background 0.2s;
+      line-height: 1;
+    }
+
+    .remove-item-btn:hover {
+      background: #fbd0d0;
+    }
+
+    .add-item-btn {
+      background: transparent;
+      color: #3ab5a0;
+      border: 1.5px dashed #3ab5a0;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+
+    .add-item-btn:hover {
+      background: #e8faf7;
+    }
+
+    /* フォームボタン */
+    .form-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .btn-primary {
+      background: #2d7dd2;
+      color: white;
+      border: none;
+      padding: 11px 26px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #2568b8;
+    }
+
+    .btn-cancel {
+      background: #f0f0f0;
+      color: #666;
+      border: none;
+      padding: 11px 22px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+
+    .btn-cancel:hover {
+      background: #e0e0e0;
+    }
+
+    /* ===========================
+       コントロールセクション（検索・並び替え・フィルター）
+    =========================== */
+    .controls-section {
+      background: white;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.09);
+    }
+
+    /* 検索・並び替え行 */
+    .search-sort-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 180px;
+      padding: 10px 13px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #2d7dd2;
+      box-shadow: 0 0 0 3px rgba(45, 125, 210, 0.1);
+    }
+
+    .sort-select {
+      padding: 10px 13px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: white;
+      color: #333;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .sort-select:focus {
+      outline: none;
+      border-color: #2d7dd2;
+    }
+
+    /* フィルターボタン行 */
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .filter-btn {
+      background: #f0f4f8;
+      color: #666;
+      border: 1.5px solid #ddd;
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.83rem;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active {
+      background: #2d7dd2;
+      color: white;
+      border-color: #2d7dd2;
+    }
+
+    .filter-btn:hover:not(.active) {
+      background: #e5edf7;
+      border-color: #c5d5e8;
+    }
+
+    /* 意味表示トグル */
+    .meaning-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    /* トグルスイッチ */
+    .toggle-switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #ccc;
+      border-radius: 26px;
+      transition: 0.3s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: #3ab5a0;
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+    }
+
+    .toggle-label {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* 単語件数 */
+    .word-count-text {
+      font-size: 0.83rem;
+      color: #999;
+      margin-top: 10px;
+    }
+
+    /* ===========================
+       単語カード一覧
+    =========================== */
+    .word-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* 単語カード */
+    .word-card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.09);
+      border-left: 5px solid #2d7dd2;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .word-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
+    }
+
+    /* カードの左ボーダー色：お気に入り・苦手の状態に応じて変える */
+    .word-card.is-favorite {
+      border-left-color: #f5a623;
+    }
+
+    .word-card.is-weak {
+      border-left-color: #ff9500;
+    }
+
+    .word-card.is-favorite.is-weak {
+      border-left-color: #e55;
+    }
+
+    /* カードヘッダー */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .word-title-area {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .word-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      word-break: break-word;
+    }
+
+    .pos-badge {
+      display: inline-block;
+      background: #e8f1fb;
+      color: #2d7dd2;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    /* 品詞タブ */
+    .pos-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .pos-tab-btn {
+      padding: 3px 12px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      border: 1.5px solid #c5d3f7;
+      border-radius: 12px;
+      background: white;
+      color: #5b86e5;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .pos-tab-btn:hover {
+      background: #eef2fd;
+    }
+
+    .pos-tab-btn.active {
+      background: #2d7dd2;
+      color: white;
+      border-color: #2d7dd2;
+    }
+
+    /* フラグボタン群 */
+    .card-flag-buttons {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .flag-btn {
+      border: 1.5px solid #ddd;
+      background: white;
+      color: #999;
+      padding: 5px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .flag-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .flag-btn.favorite-on {
+      background: #fff8e1;
+      border-color: #f5a623;
+      color: #d48806;
+      font-weight: 600;
+    }
+
+    .flag-btn.weak-on {
+      background: #fff3e0;
+      border-color: #ff9500;
+      color: #c67400;
+      font-weight: 600;
+    }
+
+    /* 意味セクション */
+    .card-section {
+      margin-bottom: 10px;
+    }
+
+    .card-section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 5px;
+    }
+
+    .meanings-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .meanings-list li {
+      font-size: 0.95rem;
+      color: #444;
+      padding: 2px 0;
+    }
+
+    .meanings-list li::before {
+      content: '・';
+      color: #2d7dd2;
+    }
+
+    /* 意味が非表示のときのプレースホルダー */
+    .meaning-hidden-text {
+      font-size: 0.88rem;
+      color: #bbb;
+      font-style: italic;
+      padding: 4px 0;
+    }
+
+    /* 例文リスト（カード表示） */
+    .examples-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .examples-list li {
+      padding: 6px 10px;
+      border-left: 3px solid #e0e0e0;
+      background: #fafafa;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .example-english {
+      font-size: 0.88rem;
+      color: #555;
+      font-style: italic;
+    }
+
+    .example-japanese {
+      font-size: 0.82rem;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    /* コピーボタン（単語・例文共通） */
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      color: #666;
+      background: #f0f0f0;
+      border: 1px solid #d8d8d8;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+      white-space: nowrap;
+      min-height: 28px;
+    }
+
+    .copy-btn:hover {
+      background: #e2e2e2;
+      color: #333;
+    }
+
+    .copy-btn.copied {
+      background: #d4edda;
+      color: #1a7f37;
+      border-color: #a8d5b5;
+    }
+
+    /* 単語タイトル行（単語名＋コピーボタン横並び） */
+    .word-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* 例文行（テキスト＋コピーボタン横並び） */
+    .example-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .example-row .example-english {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* コピー完了トースト通知 */
+    .copy-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: #2c3e50;
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 9999;
+      white-space: nowrap;
+    }
+
+    .copy-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===========================
+       画像機能
+    =========================== */
+
+    /* カード内の画像表示エリア */
+    .card-image-area {
+      margin: 10px 0 4px;
+      text-align: center;
+    }
+
+    .card-image-img {
+      max-width: 200px;
+      max-height: 200px;
+      width: auto;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* フォーム内の画像入力エリア */
+    .image-form-area {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .image-preview-box {
+      width: 110px;
+      height: 110px;
+      border: 2px dashed #d0d0d0;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #fafafa;
+    }
+
+    .image-preview-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .no-image-text {
+      font-size: 0.78rem;
+      color: #bbb;
+      text-align: center;
+      padding: 4px;
+    }
+
+    .image-form-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      justify-content: flex-start;
+    }
+
+    /* 画像選択ボタン（label要素） */
+    .image-select-btn {
+      display: inline-block;
+      padding: 7px 14px;
+      background: #f0f0f0;
+      border: 1px solid #d0d0d0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #444;
+      transition: background 0.15s;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .image-select-btn:hover {
+      background: #e4e4e4;
+    }
+
+    /* 画像操作ボタン（削除・取り消しなど） */
+    .image-action-btn {
+      padding: 7px 14px;
+      background: white;
+      border: 1px solid #e0a0a0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #c0392b;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .image-action-btn:hover {
+      background: #fff0f0;
+    }
+
+    /* 例文ペア入力欄（フォーム） */
+    .example-pair-item {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .example-pair-inputs {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .example-pair-inputs input[type="text"] {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      transition: border-color 0.2s;
+    }
+
+    .example-pair-inputs input[type="text"]:focus {
+      outline: none;
+      border-color: #2d7dd2;
+      box-shadow: 0 0 0 3px rgba(45, 125, 210, 0.1);
+    }
+
+    .example-pair-inputs input.input-japanese {
+      border-color: #e8e8e8;
+      background: #fafafa;
+      font-size: 0.88rem;
+    }
+
+    .example-pair-inputs input.input-japanese:focus {
+      border-color: #3ab5a0;
+      box-shadow: 0 0 0 3px rgba(58, 181, 160, 0.1);
+      background: white;
+    }
+
+    /* クイズ成績表示（カード内） */
+    .card-stats {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 8px 10px;
+      background: #f8f9fb;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+    }
+
+    .stat-item {
+      color: #888;
+      white-space: nowrap;
+    }
+
+    .stat-item span {
+      font-weight: 600;
+      color: #555;
+    }
+
+    .stat-accuracy {
+      margin-left: auto;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+
+    .stat-accuracy.not-tried {
+      background: #f0f0f0;
+      color: #aaa;
+    }
+
+    .stat-accuracy.low {
+      background: #fde8e8;
+      color: #c44;
+    }
+
+    .stat-accuracy.mid {
+      background: #fff3e0;
+      color: #b36200;
+    }
+
+    .stat-accuracy.high {
+      background: #e6f7f3;
+      color: #1d7a6a;
+    }
+
+    /* カードアクションボタン */
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .btn-edit {
+      background: #e8f1fb;
+      color: #2d7dd2;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-edit:hover {
+      background: #d1e5f8;
+    }
+
+    .btn-delete {
+      background: #fde8e8;
+      color: #e55;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-delete:hover {
+      background: #fbd0d0;
+    }
+
+    /* ===========================
+       空の状態
+    =========================== */
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: #bbb;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 14px;
+    }
+
+    .empty-state p {
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    /* ===========================
+       削除確認モーダル
+    =========================== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: 14px;
+      padding: 28px 24px;
+      max-width: 360px;
+      width: 92%;
+      box-shadow: 0 10px 36px rgba(0, 0, 0, 0.22);
+    }
+
+    .modal-box h3 {
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .modal-box p {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 22px;
+      line-height: 1.6;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-modal-cancel {
+      background: #f0f0f0;
+      color: #666;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .btn-modal-cancel:hover {
+      background: #e0e0e0;
+    }
+
+    .btn-modal-delete {
+      background: #e55;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn-modal-delete:hover {
+      background: #cc3333;
+    }
+
+    /* ===========================
+       クイズセクション
+    =========================== */
+
+    /* クイズ開始ボタン */
+    .open-quiz-btn {
+      background: #3ab5a0;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      margin-left: 10px;
+      transition: background 0.2s;
+      display: inline-block;
+    }
+
+    .open-quiz-btn:hover {
+      background: #2e9e8c;
+    }
+
+    /* クイズエリア全体 */
+    .quiz-section {
+      background: white;
+      border-radius: 14px;
+      padding: 28px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.09);
+      border-top: 4px solid #3ab5a0;
+    }
+
+    .quiz-section h2 {
+      font-size: 1.1rem;
+      color: #3ab5a0;
+      margin-bottom: 6px;
+    }
+
+    /* クイズのメッセージ表示 */
+    .quiz-message {
+      font-size: 0.92rem;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    /* 問題の英単語 */
+    .quiz-question-word {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      text-align: center;
+      padding: 20px 10px 8px;
+      letter-spacing: 0.03em;
+    }
+
+    /* 問題の品詞バッジ */
+    .quiz-question-pos {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    /* 4択ボタン群 */
+    .quiz-choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .quiz-choice-btn {
+      background: #f5f7fa;
+      border: 2px solid #e0e4ea;
+      color: #333;
+      padding: 14px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      text-align: center;
+      transition: background 0.15s, border-color 0.15s;
+      word-break: break-all;
+    }
+
+    .quiz-choice-btn:hover:not(:disabled) {
+      background: #eaf1fb;
+      border-color: #2d7dd2;
+    }
+
+    /* 正解 */
+    .quiz-choice-btn.correct {
+      background: #e6f7f3;
+      border-color: #3ab5a0;
+      color: #1d7a6a;
+      font-weight: 700;
+    }
+
+    /* 不正解（選んだ選択肢） */
+    .quiz-choice-btn.wrong {
+      background: #fde8e8;
+      border-color: #e55;
+      color: #a33;
+      font-weight: 700;
+    }
+
+    /* 判定後はボタンを無効化 */
+    .quiz-choice-btn:disabled {
+      cursor: default;
+    }
+
+    /* 正解 / 不正解フィードバック */
+    .quiz-feedback {
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 10px 0 6px;
+      min-height: 32px;
+    }
+
+    .quiz-feedback.correct {
+      color: #3ab5a0;
+    }
+
+    .quiz-feedback.wrong {
+      color: #e55;
+    }
+
+    /* 次の問題へボタン */
+    .quiz-next-btn {
+      display: block;
+      width: 100%;
+      background: #2d7dd2;
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 16px;
+      transition: background 0.2s;
+    }
+
+    .quiz-next-btn:hover {
+      background: #2568b8;
+    }
+
+    /* クイズ終了ボタン */
+    .quiz-end-btn {
+      display: block;
+      width: 100%;
+      background: #f0f0f0;
+      color: #666;
+      border: none;
+      padding: 11px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+
+    .quiz-end-btn:hover {
+      background: #e0e0e0;
+    }
+
+    /* クイズモード選択UI */
+    .quiz-mode-group {
+      margin-bottom: 18px;
+    }
+
+    .quiz-mode-row-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .quiz-mode-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .quiz-mode-btn {
+      background: #f0f4f8;
+      color: #555;
+      border: 1.5px solid #ddd;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .quiz-mode-btn.selected {
+      background: #3ab5a0;
+      color: white;
+      border-color: #3ab5a0;
+      font-weight: 600;
+    }
+
+    .quiz-mode-btn:hover:not(.selected) {
+      background: #e5edf7;
+    }
+
+    .quiz-pos-select-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: #f5f9f8;
+      border-radius: 8px;
+    }
+
+    .quiz-pos-select-row label {
+      font-size: 0.85rem;
+      color: #555;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    .quiz-pos-select-row select {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: white;
+      color: #333;
+    }
+
+    .quiz-pos-select-row select:focus {
+      outline: none;
+      border-color: #3ab5a0;
+    }
+
+    .quiz-start-btn {
+      display: block;
+      width: 100%;
+      background: #3ab5a0;
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 16px;
+      transition: background 0.2s;
+    }
+
+    .quiz-start-btn:hover {
+      background: #2e9e8c;
+    }
+
+    .quiz-mode-error {
+      color: #e55;
+      font-size: 0.88rem;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: #fde8e8;
+      border-radius: 8px;
+      display: none;
+    }
+
+    /* ===========================
+       スペル入力クイズ
+    =========================== */
+
+    /* 問題文（日本語の意味） */
+    .quiz-question-meaning {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      text-align: center;
+      padding: 20px 10px 8px;
+      line-height: 1.5;
+    }
+
+    .quiz-question-hint {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    /* 入力欄 + 解答ボタンの行 */
+    .spell-input-area {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .spell-input {
+      flex: 1;
+      padding: 12px 14px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      min-width: 0;
+    }
+
+    .spell-input:focus {
+      outline: none;
+      border-color: #2d7dd2;
+      box-shadow: 0 0 0 3px rgba(45, 125, 210, 0.1);
+    }
+
+    .spell-input:disabled {
+      background: #f5f5f5;
+      color: #aaa;
+    }
+
+    .spell-submit-btn {
+      background: #2d7dd2;
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .spell-submit-btn:hover:not(:disabled) {
+      background: #2568b8;
+    }
+
+    .spell-submit-btn:disabled {
+      background: #aaa;
+      cursor: default;
+    }
+
+    /* 不正解時の正解詳細ボックス */
+    .spell-answer-detail {
+      background: #fafafa;
+      border: 1.5px solid #eee;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 8px;
+    }
+
+    .spell-answer-word {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+
+    .spell-answer-meanings {
+      margin-top: 4px;
+    }
+
+    /* 英文入力クイズのヒント表示 */
+    .sentence-hint-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: #f5f7fa;
+      border: 1px solid #e8eaed;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .sentence-hint-label {
+      font-size: 0.78rem;
+      color: #aaa;
+      font-weight: 600;
+      white-space: nowrap;
+      padding-top: 2px;
+    }
+
+    .sentence-hint {
+      font-family: monospace;
+      font-size: 1rem;
+      color: #999;
+      letter-spacing: 0.08em;
+      word-break: break-all;
+    }
+
+    /* 例文クイズの問題文（英文） */
+    .quiz-question-sentence {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #2c3e50;
+      line-height: 1.6;
+      margin-bottom: 8px;
+      padding: 16px 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #5b86e5;
+    }
+
+    /* 例文クイズの出典（単語・品詞） */
+    .quiz-question-source {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    /* 例文穴埋めクイズ */
+    .fillblank-sentence {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #2c3e50;
+      line-height: 1.7;
+      margin-bottom: 10px;
+      padding: 14px 18px;
+      background: #f8fafc;
+      border: 1.5px solid #d0dde8;
+      border-radius: 10px;
+      word-break: break-word;
+    }
+
+    .fillblank-japanese {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 12px;
+      padding: 0 2px;
+    }
+
+    .fillblank-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .fillblank-hint-label {
+      font-size: 0.82rem;
+      color: #999;
+      white-space: nowrap;
+    }
+
+    .fillblank-hint-chars {
+      font-family: monospace;
+      font-size: 1rem;
+      color: #2d7dd2;
+      letter-spacing: 0.15em;
+      font-weight: 700;
+    }
+
+    .fillblank-source {
+      font-size: 0.82rem;
+      color: #aaa;
+      margin-bottom: 14px;
+    }
+
+    /* クイズ種別選択（4択 / スペル入力 / 英文入力） */
+    .quiz-type-group {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    /* ===========================
+       レスポンシブ（スマホ対応）
+    =========================== */
+    @media (max-width: 520px) {
+      header h1 {
+        font-size: 1.3rem;
+      }
+
+      .card-header {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .card-flag-buttons {
+        justify-content: flex-start;
+      }
+
+      .word-title {
+        font-size: 1.15rem;
+      }
+
+      .form-buttons {
+        flex-direction: column;
+      }
+
+      .btn-primary,
+      .btn-cancel {
+        width: 100%;
+        text-align: center;
+      }
+
+      .open-quiz-btn {
+        margin-left: 0;
+        margin-top: 8px;
+      }
+
+      .quiz-choices {
+        grid-template-columns: 1fr;
+      }
+
+      .quiz-question-word {
+        font-size: 1.6rem;
+      }
+
+      .copy-btn {
+        min-height: 32px;
+        padding: 4px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>英単語帳</h1>
+  <p>単語を登録して、効率よく暗記しよう</p>
+</header>
+
+<div class="container">
+
+  <!-- ボタン行：単語追加 & クイズ開始 -->
+  <button class="open-form-btn" id="openFormBtn" onclick="handleFormToggle()">
+    ＋ 単語を追加する
+  </button>
+  <button class="open-quiz-btn" id="openQuizBtn" onclick="handleQuizToggle()">
+    クイズを始める
+  </button>
+
+  <!-- クイズセクション -->
+  <div class="quiz-section" id="quizSection" style="display: none;">
+    <h2 id="quizTitle">クイズ</h2>
+    <!-- モード選択エリア（クイズ開始前に表示） -->
+    <div id="quizModeArea"></div>
+    <!-- クイズ本体エリア（出題中に表示） -->
+    <div class="quiz-message" id="quizMessage"></div>
+    <div id="quizContent"></div>
+  </div>
+
+  <!-- 登録・編集フォーム -->
+  <div class="form-section" id="formSection" style="display: none;">
+    <h2 id="formTitle">新しい単語を追加</h2>
+
+    <!-- 英単語 -->
+    <div class="form-group">
+      <label for="inputWord">英単語<span class="required-mark">*</span></label>
+      <input type="text" id="inputWord" placeholder="例: vocabulary">
+      <div class="error-msg" id="wordError"></div>
+    </div>
+
+    <!-- 品詞 -->
+    <div class="form-group">
+      <label for="inputPartOfSpeech">品詞</label>
+      <select id="inputPartOfSpeech">
+        <option value="noun">noun（名詞）</option>
+        <option value="verb">verb（動詞）</option>
+        <option value="adjective">adjective（形容詞）</option>
+        <option value="adverb">adverb（副詞）</option>
+        <option value="preposition">preposition（前置詞）</option>
+        <option value="conjunction">conjunction（接続詞）</option>
+        <option value="pronoun">pronoun（代名詞）</option>
+        <option value="phrase">phrase（熟語）</option>
+        <option value="other">other（その他）</option>
+      </select>
+    </div>
+
+    <!-- 日本語の意味（複数） -->
+    <div class="form-group">
+      <label>日本語の意味<span class="required-mark">*</span></label>
+      <div class="dynamic-input-list" id="meaningsContainer"></div>
+      <button class="add-item-btn" onclick="addMeaningInput()">＋ 意味を追加</button>
+      <div class="error-msg" id="meaningError"></div>
+    </div>
+
+    <!-- 例文（複数） -->
+    <div class="form-group">
+      <label>例文</label>
+      <div class="dynamic-input-list" id="examplesContainer"></div>
+      <button class="add-item-btn" onclick="addExampleInput()">＋ 例文を追加</button>
+    </div>
+
+    <!-- 画像（品詞ごとに1枚・省略可） -->
+    <div class="form-group">
+      <label>画像（省略可・品詞ごとに1枚）</label>
+      <div class="image-form-area">
+        <div class="image-preview-box" id="imagePreviewBox">
+          <span class="no-image-text" id="noImageText">画像なし</span>
+          <img id="imagePreview" alt="プレビュー" style="display:none">
+        </div>
+        <div class="image-form-buttons">
+          <label class="image-select-btn">
+            画像を選ぶ
+            <input type="file" id="imageFileInput" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+          </label>
+          <button type="button" class="image-action-btn" id="imageActionBtn" onclick="handleImageAction()" style="display:none">削除</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- フォームボタン -->
+    <div class="form-buttons">
+      <button class="btn-primary" onclick="saveWord()">保存する</button>
+      <button class="btn-cancel" onclick="cancelForm()">キャンセル</button>
+    </div>
+  </div>
+
+  <!-- コントロールセクション -->
+  <div class="controls-section">
+    <!-- 検索・並び替え -->
+    <div class="search-sort-row">
+      <input
+        type="text"
+        class="search-input"
+        id="searchInput"
+        placeholder="英単語・意味で検索..."
+        oninput="renderWordList()"
+      >
+      <select class="sort-select" id="sortSelect" onchange="renderWordList()">
+        <option value="newest">新しい順</option>
+        <option value="oldest">古い順</option>
+        <option value="az">A-Z順</option>
+        <option value="pos">品詞順</option>
+      </select>
+    </div>
+
+    <!-- フィルターボタン -->
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('all', this)">すべて</button>
+      <button class="filter-btn" onclick="setFilter('favorite', this)">★ お気に入り</button>
+      <button class="filter-btn" onclick="setFilter('weak', this)">！ 苦手</button>
+    </div>
+
+    <!-- 意味表示トグル -->
+    <div class="meaning-toggle-row">
+      <label class="toggle-switch">
+        <input type="checkbox" id="meaningToggle" checked onchange="renderWordList()">
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="toggle-label">日本語の意味を表示する</span>
+    </div>
+
+
+    <!-- 件数表示 -->
+    <div class="word-count-text" id="wordCountText"></div>
+  </div>
+
+  <!-- 単語カード一覧 -->
+  <div class="word-card-list" id="wordCardList"></div>
+
+</div>
+
+<!-- 削除確認モーダル -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <h3>単語を削除しますか？</h3>
+    <p id="deleteModalText">この操作は取り消せません。</p>
+    <div class="modal-buttons">
+      <button class="btn-modal-cancel" onclick="closeDeleteModal()">キャンセル</button>
+      <button class="btn-modal-delete" onclick="confirmDelete()">削除する</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===========================
+  // データ管理
+  // ===========================
+
+  // localStorageに保存するキー
+  var STORAGE_KEY = 'englishVocabApp_v1';
+
+  // メモリ上の単語リスト
+  var wordList = [];
+
+  // 編集中の単語のID（新規追加の場合はnull）
+  var editingWordId = null;
+
+  // 編集中の品詞のID（新規追加の場合はnull）
+  var editingPartId = null;
+
+  // 削除対象の単語のID
+  var deletingWordId = null;
+
+  // 削除対象の品詞のID
+  var deletingPartId = null;
+
+  // 現在のフィルター（'all' / 'favorite' / 'weak'）
+  var currentFilter = 'all';
+
+  // 各単語カードで表示中の品詞インデックス（word.id → partIndex）
+  var activePartIndex = {};
+
+  // 品詞を並び替えるための順序定義
+  var partOfSpeechOrder = {
+    noun: 1,
+    verb: 2,
+    adjective: 3,
+    adverb: 4,
+    preposition: 5,
+    conjunction: 6,
+    pronoun: 7,
+    phrase: 8,
+    other: 9
+  };
+
+  // 品詞の表示ラベル
+  var partOfSpeechLabels = {
+    noun: 'noun（名詞）',
+    verb: 'verb（動詞）',
+    adjective: 'adjective（形容詞）',
+    adverb: 'adverb（副詞）',
+    preposition: 'preposition（前置詞）',
+    conjunction: 'conjunction（接続詞）',
+    pronoun: 'pronoun（代名詞）',
+    phrase: 'phrase（熟語）',
+    other: 'other（その他）'
+  };
+
+  // localStorageから単語データを読み込む（旧形式からの自動マイグレーション付き）
+  function loadWords() {
+    var stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        var parsed = JSON.parse(stored);
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+          wordList = [];
+          return;
+        }
+        // 旧形式の検出: 先頭要素がトップレベルに partOfSpeech を持ち parts を持たない
+        if (parsed[0].partOfSpeech !== undefined && !parsed[0].parts) {
+          wordList = migrateOldFormat(parsed);
+          saveWords(); // マイグレーション済みデータを即保存
+        } else {
+          wordList = parsed;
+          // parts 内の欠損フィールドを補完する
+          wordList.forEach(function(word) {
+            if (!word.parts) word.parts = [];
+            word.parts.forEach(function(part) {
+              if (!part.id) part.id = generateId();
+              if (typeof part.correct !== 'number') part.correct = 0;
+              if (typeof part.wrong !== 'number') part.wrong = 0;
+            });
+          });
+        }
+      } catch (e) {
+        wordList = [];
+      }
+    } else {
+      wordList = [];
+    }
+  }
+
+  // 旧形式（単語＋品詞がフラットなレコード）を新形式（単語に parts[] を持つ）に変換する
+  function migrateOldFormat(oldItems) {
+    var wordMap = {};
+    var wordOrder = [];
+
+    oldItems.forEach(function(item) {
+      var key = item.word.toLowerCase();
+      if (!wordMap[key]) {
+        wordMap[key] = {
+          id: item.id,
+          word: item.word,
+          createdAt: item.createdAt || Date.now(),
+          parts: []
+        };
+        wordOrder.push(key);
+      }
+      // 旧形式の例文（文字列配列）を {english, japanese} に変換する
+      var examples = item.examples || [];
+      if (examples.length > 0 && typeof examples[0] === 'string') {
+        examples = examples.map(function(ex) { return { english: ex, japanese: '' }; });
+      }
+      wordMap[key].parts.push({
+        id: generateId(),
+        partOfSpeech: item.partOfSpeech || 'other',
+        meanings: item.meanings || [],
+        examples: examples,
+        isFavorite: item.isFavorite || false,
+        isWeak: item.isWeak || false,
+        correct: typeof item.correct === 'number' ? item.correct : 0,
+        wrong: typeof item.wrong === 'number' ? item.wrong : 0,
+        createdAt: item.createdAt || Date.now()
+      });
+    });
+
+    return wordOrder.map(function(key) { return wordMap[key]; });
+  }
+
+  // 単語データをlocalStorageに保存する
+  function saveWords() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(wordList));
+  }
+
+  // 一意なIDを生成する
+  function generateId() {
+    return Date.now().toString() + Math.random().toString(36).slice(2, 8);
+  }
+
+  // ===========================
+  // フォーム表示・非表示
+  // ===========================
+
+  // 「単語を追加する」ボタンを押したときの処理
+  function handleFormToggle() {
+    var formSection = document.getElementById('formSection');
+    var isVisible = formSection.style.display !== 'none';
+    if (isVisible) {
+      cancelForm();
+    } else {
+      openFormForNew();
+    }
+  }
+
+  // フォームを「新規追加」モードで開く
+  function openFormForNew() {
+    editingWordId = null;
+    document.getElementById('formTitle').textContent = '新しい単語を追加';
+    document.getElementById('openFormBtn').textContent = '✕ 閉じる';
+    resetFormFields();
+    document.getElementById('formSection').style.display = 'block';
+    document.getElementById('formSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // フォームをキャンセルして閉じる
+  function cancelForm() {
+    editingWordId = null;
+    editingPartId = null;
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('openFormBtn').textContent = '＋ 単語を追加する';
+    hideError('wordError');
+    hideError('meaningError');
+    resetFormImageState();
+  }
+
+  // フォームの各入力欄を初期状態にリセットする
+  function resetFormFields() {
+    document.getElementById('inputWord').value = '';
+    document.getElementById('inputPartOfSpeech').value = 'noun';
+    hideError('wordError');
+    hideError('meaningError');
+
+    // 意味の入力欄を1つにリセット
+    var meaningsContainer = document.getElementById('meaningsContainer');
+    meaningsContainer.innerHTML = '';
+    meaningsContainer.appendChild(createDynamicInputItem('', '例: 語彙、単語'));
+
+    // 例文の入力欄を1セットにリセット
+    var examplesContainer = document.getElementById('examplesContainer');
+    examplesContainer.innerHTML = '';
+    examplesContainer.appendChild(createExamplePairItem('', ''));
+
+    resetFormImageState();
+  }
+
+  // 動的入力欄（入力テキスト + 削除ボタン）のDOM要素を作成して返す
+  function createDynamicInputItem(value, placeholder) {
+    var div = document.createElement('div');
+    div.className = 'dynamic-input-item';
+
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.value = value || '';
+    input.placeholder = placeholder || '';
+
+    var removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'remove-item-btn';
+    removeBtn.textContent = '×';
+    removeBtn.title = '削除';
+    removeBtn.onclick = function() {
+      removeDynamicInputItem(removeBtn);
+    };
+
+    div.appendChild(input);
+    div.appendChild(removeBtn);
+    return div;
+  }
+
+  // 意味の入力欄を1行追加する
+  function addMeaningInput() {
+    var container = document.getElementById('meaningsContainer');
+    container.appendChild(createDynamicInputItem('', '例: 語彙、単語'));
+  }
+
+  // 例文のペア入力欄を1セット追加する
+  function addExampleInput() {
+    var container = document.getElementById('examplesContainer');
+    container.appendChild(createExamplePairItem('', ''));
+  }
+
+  // 動的入力欄（意味）の削除ボタンを押したときの処理
+  // 最後の1行は削除せず、内容だけクリアする
+  function removeDynamicInputItem(button) {
+    var container = button.closest('.dynamic-input-list');
+    var items = container.querySelectorAll('.dynamic-input-item');
+    if (items.length <= 1) {
+      // 最後の1行なので中身だけクリア
+      container.querySelector('input').value = '';
+      return;
+    }
+    button.closest('.dynamic-input-item').remove();
+  }
+
+  // 例文ペア入力欄（英文＋日本語訳）のDOM要素を作成して返す
+  function createExamplePairItem(english, japanese) {
+    var div = document.createElement('div');
+    div.className = 'example-pair-item';
+
+    // 英文・日本語訳の入力欄をまとめるdiv
+    var inputsDiv = document.createElement('div');
+    inputsDiv.className = 'example-pair-inputs';
+
+    var engInput = document.createElement('input');
+    engInput.type = 'text';
+    engInput.className = 'example-english-input';
+    engInput.value = english || '';
+    engInput.placeholder = '英文（例: She has a wide vocabulary.）';
+
+    var jpInput = document.createElement('input');
+    jpInput.type = 'text';
+    jpInput.className = 'example-japanese-input input-japanese';
+    jpInput.value = japanese || '';
+    jpInput.placeholder = '日本語訳（省略可）';
+
+    inputsDiv.appendChild(engInput);
+    inputsDiv.appendChild(jpInput);
+
+    // 削除ボタン
+    var removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'remove-item-btn';
+    removeBtn.textContent = '×';
+    removeBtn.title = 'この例文を削除';
+    removeBtn.onclick = function() {
+      removeExamplePairItem(removeBtn);
+    };
+
+    div.appendChild(inputsDiv);
+    div.appendChild(removeBtn);
+    return div;
+  }
+
+  // 例文ペア削除ボタンを押したときの処理
+  // 最後の1セットは削除せず、両欄をクリアする
+  function removeExamplePairItem(button) {
+    var container = document.getElementById('examplesContainer');
+    var items = container.querySelectorAll('.example-pair-item');
+    if (items.length <= 1) {
+      // 最後の1セットなので中身だけクリア
+      var inputs = button.closest('.example-pair-item').querySelectorAll('input');
+      inputs.forEach(function(inp) { inp.value = ''; });
+      return;
+    }
+    button.closest('.example-pair-item').remove();
+  }
+
+  // コンテナ内の全input要素から値を取得する（空のものは除く）
+  // 意味欄で使用する
+  function getInputValuesFromContainer(containerId) {
+    var container = document.getElementById(containerId);
+    var inputs = container.querySelectorAll('input[type="text"]');
+    var values = [];
+    inputs.forEach(function(input) {
+      var val = input.value.trim();
+      if (val) {
+        values.push(val);
+      }
+    });
+    return values;
+  }
+
+  // 例文コンテナから {english, japanese} の配列を取得する
+  // 英文が空のものは除く
+  function getExamplesFromContainer() {
+    var container = document.getElementById('examplesContainer');
+    var items = container.querySelectorAll('.example-pair-item');
+    var examples = [];
+    items.forEach(function(item) {
+      var engInput = item.querySelector('.example-english-input');
+      var jpInput = item.querySelector('.example-japanese-input');
+      var english = engInput ? engInput.value.trim() : '';
+      var japanese = jpInput ? jpInput.value.trim() : '';
+      // 英文が入力されているものだけ保存する
+      if (english) {
+        examples.push({ english: english, japanese: japanese });
+      }
+    });
+    return examples;
+  }
+
+  // ===========================
+  // 単語の保存（追加 / 更新）
+  // ===========================
+
+  function saveWord() {
+    var wordInput = document.getElementById('inputWord').value.trim();
+    var partOfSpeech = document.getElementById('inputPartOfSpeech').value;
+    var meanings = getInputValuesFromContainer('meaningsContainer');
+    var examples = getExamplesFromContainer();
+
+    // 英単語が入力されているか確認
+    if (!wordInput) {
+      showError('wordError', '英単語を入力してください。');
+      return;
+    }
+    hideError('wordError');
+
+    // 意味が1つ以上入力されているか確認
+    if (meanings.length === 0) {
+      showError('meaningError', '日本語の意味を1つ以上入力してください。');
+      return;
+    }
+    hideError('meaningError');
+
+    if (editingPartId) {
+      // ===== 編集モード: 特定の品詞データを更新する =====
+      var targetWord = wordList.find(function(w) { return w.id === editingWordId; });
+      if (!targetWord) { cancelForm(); return; }
+      var targetPart = targetWord.parts.find(function(p) { return p.id === editingPartId; });
+      if (!targetPart) { cancelForm(); return; }
+
+      // 重複チェック: 同じ単語名で同じ品詞が（編集中以外に）存在しないか
+      var wordKey = wordInput.toLowerCase();
+      var isDuplicate = wordList.some(function(w) {
+        return w.word.toLowerCase() === wordKey && w.parts.some(function(p) {
+          return p.id !== editingPartId && p.partOfSpeech === partOfSpeech;
+        });
+      });
+      if (isDuplicate) {
+        var posLabel = partOfSpeechLabels[partOfSpeech] || partOfSpeech;
+        showError('wordError', '「' + wordInput + ' / ' + posLabel + '」はすでに登録されています。');
+        return;
+      }
+
+      // 単語名の変更（全品詞に影響）
+      targetWord.word = wordInput;
+      // 品詞データの更新
+      targetPart.partOfSpeech = partOfSpeech;
+      targetPart.meanings = meanings;
+      targetPart.examples = examples;
+      // 画像の処理は後続の finalize 内で行うため、ここではスキップ
+
+    } else {
+      // ===== 新規モード: 単語またはその中の品詞を追加する =====
+      var wordKey = wordInput.toLowerCase();
+      var existingWord = wordList.find(function(w) { return w.word.toLowerCase() === wordKey; });
+
+      if (existingWord) {
+        // 同じ単語が既に存在する場合: 品詞の重複チェック
+        var isDuplicate = existingWord.parts.some(function(p) {
+          return p.partOfSpeech === partOfSpeech;
+        });
+        if (isDuplicate) {
+          var posLabel = partOfSpeechLabels[partOfSpeech] || partOfSpeech;
+          showError('wordError', '「' + wordInput + ' / ' + posLabel + '」はすでに登録されています。同じ単語でも品詞が違えば追加できます。');
+          return;
+        }
+        // 既存の単語に新しい品詞として追加する
+        var newPart = {
+          id: generateId(),
+          partOfSpeech: partOfSpeech,
+          meanings: meanings,
+          examples: examples,
+          isFavorite: false,
+          isWeak: false,
+          correct: 0,
+          wrong: 0,
+          createdAt: Date.now()
+        };
+        existingWord.parts.push(newPart);
+        // 追加した品詞を表示するようにタブを切り替える
+        activePartIndex[existingWord.id] = existingWord.parts.length - 1;
+      } else {
+        // 新しい単語として追加する
+        var newWord = {
+          id: generateId(),
+          word: wordInput,
+          createdAt: Date.now(),
+          parts: [{
+            id: generateId(),
+            partOfSpeech: partOfSpeech,
+            meanings: meanings,
+            examples: examples,
+            isFavorite: false,
+            isWeak: false,
+            correct: 0,
+            wrong: 0,
+            createdAt: Date.now()
+          }]
+        };
+        wordList.push(newWord);
+      }
+    }
+
+    // 画像処理を行ってから保存・再描画を確定する
+    finalizeImageAndSave();
+  }
+
+  // 画像の保存/削除を非同期で行い、完了後にデータを保存して画面を更新する
+  function finalizeImageAndSave() {
+    var mode = formImageState.mode;
+
+    if (mode === 'new') {
+      // 新しい画像をリサイズして保存する
+      var newImageId = 'img_' + generateId();
+      var file = formImageState.file;
+      // 対象の品詞データに imageId をセットする
+      var targetPart = getTargetPartForSave();
+      if (targetPart) targetPart.imageId = newImageId;
+      resizeAndSaveImage(file, newImageId, function() {
+        saveWords();
+        cancelForm();
+        renderWordList();
+      });
+
+    } else if (mode === 'delete') {
+      // 既存画像を削除する
+      var oldImageId = formImageState.existingId;
+      var targetPart = getTargetPartForSave();
+      if (targetPart) delete targetPart.imageId;
+      deleteImageFromDB(oldImageId, function() {
+        delete imageCache[oldImageId];
+        saveWords();
+        cancelForm();
+        renderWordList();
+      });
+
+    } else {
+      // 'keep' または 'none': 画像に変更なし
+      saveWords();
+      cancelForm();
+      renderWordList();
+    }
+  }
+
+  // saveWord が確定した品詞オブジェクトへの参照を返す
+  function getTargetPartForSave() {
+    if (editingPartId) {
+      var w = wordList.find(function(w) { return w.id === editingWordId; });
+      if (!w) return null;
+      return w.parts.find(function(p) { return p.id === editingPartId; }) || null;
+    }
+    // 新規追加: 最後に push/追加された品詞
+    var wordInput = document.getElementById('inputWord').value.trim().toLowerCase();
+    var existingWord = wordList.find(function(w) { return w.word.toLowerCase() === wordInput; });
+    if (existingWord) return existingWord.parts[existingWord.parts.length - 1] || null;
+    var newWord = wordList[wordList.length - 1];
+    if (newWord) return newWord.parts[newWord.parts.length - 1] || null;
+    return null;
+  }
+
+  // ===========================
+  // 単語の編集
+  // ===========================
+
+  function startEditWord(wordId, partId) {
+    var word = wordList.find(function(w) { return w.id === wordId; });
+    if (!word) return;
+    var part = word.parts.find(function(p) { return p.id === partId; });
+    if (!part) return;
+
+    editingWordId = wordId;
+    editingPartId = partId;
+
+    // フォームタイトルとボタン表示を変更
+    var posLabel = partOfSpeechLabels[part.partOfSpeech] || part.partOfSpeech;
+    document.getElementById('formTitle').textContent = '「' + word.word + ' / ' + posLabel + '」を編集';
+    document.getElementById('openFormBtn').textContent = '✕ 閉じる';
+    hideError('wordError');
+    hideError('meaningError');
+
+    // 英単語と品詞をセット
+    document.getElementById('inputWord').value = word.word;
+    document.getElementById('inputPartOfSpeech').value = part.partOfSpeech;
+
+    // 意味の入力欄をセット
+    var meaningsContainer = document.getElementById('meaningsContainer');
+    meaningsContainer.innerHTML = '';
+    var meaningsData = part.meanings.length > 0 ? part.meanings : [''];
+    meaningsData.forEach(function(meaning) {
+      meaningsContainer.appendChild(createDynamicInputItem(meaning, '例: 語彙、単語'));
+    });
+
+    // 例文の入力欄をセット（{english, japanese} 形式）
+    var examplesContainer = document.getElementById('examplesContainer');
+    examplesContainer.innerHTML = '';
+    if (part.examples && part.examples.length > 0) {
+      part.examples.forEach(function(example) {
+        var eng = typeof example === 'string' ? example : (example.english || '');
+        var jpn = typeof example === 'string' ? '' : (example.japanese || '');
+        examplesContainer.appendChild(createExamplePairItem(eng, jpn));
+      });
+    } else {
+      examplesContainer.appendChild(createExamplePairItem('', ''));
+    }
+
+    // 画像状態をセットアップする
+    resetFormImageState();
+    if (part.imageId) {
+      formImageState.mode = 'keep';
+      formImageState.existingId = part.imageId;
+      loadImageForForm(part.imageId);
+    }
+
+    // フォームを表示してスクロール
+    document.getElementById('formSection').style.display = 'block';
+    document.getElementById('formSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ===========================
+  // 単語の削除
+  // ===========================
+
+  function openDeleteModal(wordId, partId) {
+    var word = wordList.find(function(w) { return w.id === wordId; });
+    if (!word) return;
+    var part = word.parts.find(function(p) { return p.id === partId; });
+    if (!part) return;
+
+    deletingWordId = wordId;
+    deletingPartId = partId;
+
+    var posLabel = partOfSpeechLabels[part.partOfSpeech] || part.partOfSpeech;
+    var msg = word.parts.length === 1
+      ? '「' + word.word + '」を削除します。この操作は取り消せません。'
+      : '「' + word.word + ' / ' + posLabel + '」を削除します。他の品詞には影響しません。この操作は取り消せません。';
+    document.getElementById('deleteModalText').textContent = msg;
+    document.getElementById('deleteModal').classList.add('active');
+  }
+
+  function confirmDelete() {
+    if (!deletingWordId || !deletingPartId) return;
+    var word = wordList.find(function(w) { return w.id === deletingWordId; });
+    var imageIdToDelete = null;
+    if (word) {
+      var deletingPart = word.parts.find(function(p) { return p.id === deletingPartId; });
+      if (deletingPart && deletingPart.imageId) {
+        imageIdToDelete = deletingPart.imageId;
+      }
+      word.parts = word.parts.filter(function(p) { return p.id !== deletingPartId; });
+      if (word.parts.length === 0) {
+        // 品詞がなくなった場合は単語ごと削除する
+        wordList = wordList.filter(function(w) { return w.id !== deletingWordId; });
+        delete activePartIndex[deletingWordId];
+      } else {
+        // タブインデックスが範囲外にならないよう調整する
+        var idx = activePartIndex[deletingWordId] || 0;
+        if (idx >= word.parts.length) {
+          activePartIndex[deletingWordId] = word.parts.length - 1;
+        }
+      }
+    }
+    saveWords();
+    deletingWordId = null;
+    deletingPartId = null;
+    closeDeleteModal();
+    renderWordList();
+    // 画像をバックグラウンドで削除する（UIには影響しない）
+    if (imageIdToDelete) {
+      deleteImageFromDB(imageIdToDelete);
+      delete imageCache[imageIdToDelete];
+    }
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.remove('active');
+    deletingWordId = null;
+    deletingPartId = null;
+  }
+
+  // ===========================
+  // お気に入り・苦手のトグル
+  // ===========================
+
+  function toggleFavorite(wordId, partId) {
+    var word = wordList.find(function(w) { return w.id === wordId; });
+    if (!word) return;
+    var part = word.parts.find(function(p) { return p.id === partId; });
+    if (!part) return;
+    part.isFavorite = !part.isFavorite;
+    saveWords();
+    renderWordList();
+  }
+
+  function toggleWeak(wordId, partId) {
+    var word = wordList.find(function(w) { return w.id === wordId; });
+    if (!word) return;
+    var part = word.parts.find(function(p) { return p.id === partId; });
+    if (!part) return;
+    part.isWeak = !part.isWeak;
+    saveWords();
+    renderWordList();
+  }
+
+  // ===========================
+  // フィルター
+  // ===========================
+
+  function setFilter(filter, clickedButton) {
+    currentFilter = filter;
+    // すべてのフィルターボタンのactiveクラスを外す
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+    clickedButton.classList.add('active');
+    renderWordList();
+  }
+
+  // ===========================
+  // 一覧の描画（検索・並び替え・フィルター含む）
+  // ===========================
+
+  function renderWordList() {
+    var searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+    var sortBy = document.getElementById('sortSelect').value;
+    var showMeaning = document.getElementById('meaningToggle').checked;
+    var listContainer = document.getElementById('wordCardList');
+    var wordCountEl = document.getElementById('wordCountText');
+
+    // フィルタリング（いずれかの品詞が条件を満たす単語を通す）
+    var filtered = wordList.filter(function(word) {
+      if (currentFilter === 'favorite') {
+        return word.parts.some(function(p) { return p.isFavorite; });
+      }
+      if (currentFilter === 'weak') {
+        return word.parts.some(function(p) { return p.isWeak; });
+      }
+      return true;
+    });
+
+    // 検索（英単語 or いずれかの品詞の意味）
+    if (searchQuery) {
+      filtered = filtered.filter(function(word) {
+        if (word.word.toLowerCase().includes(searchQuery)) return true;
+        return word.parts.some(function(part) {
+          return part.meanings.some(function(m) {
+            return m.toLowerCase().includes(searchQuery);
+          });
+        });
+      });
+    }
+
+    // 並び替え
+    filtered.sort(function(a, b) {
+      if (sortBy === 'newest') {
+        return b.createdAt - a.createdAt;
+      }
+      if (sortBy === 'oldest') {
+        return a.createdAt - b.createdAt;
+      }
+      if (sortBy === 'az') {
+        return a.word.toLowerCase().localeCompare(b.word.toLowerCase());
+      }
+      if (sortBy === 'pos') {
+        // 各単語の「最も品詞順序が早い品詞」で並び替える
+        var minOrderA = Math.min.apply(null, a.parts.map(function(p) { return partOfSpeechOrder[p.partOfSpeech] || 99; }));
+        var minOrderB = Math.min.apply(null, b.parts.map(function(p) { return partOfSpeechOrder[p.partOfSpeech] || 99; }));
+        if (minOrderA !== minOrderB) return minOrderA - minOrderB;
+        return a.word.toLowerCase().localeCompare(b.word.toLowerCase());
+      }
+      return 0;
+    });
+
+    // 件数表示を更新（単語数 / 品詞数）
+    var totalParts = wordList.reduce(function(sum, w) { return sum + w.parts.length; }, 0);
+    wordCountEl.textContent = filtered.length + ' 語 / 全 ' + wordList.length + ' 語（' + totalParts + ' 品詞）';
+
+    // カードを描画
+    if (filtered.length === 0) {
+      listContainer.innerHTML = buildEmptyStateHtml(searchQuery);
+      return;
+    }
+
+    listContainer.innerHTML = filtered.map(function(word) {
+      return buildWordCardHtml(word, showMeaning);
+    }).join('');
+    loadCardImages();
+  }
+
+  // 単語カードのHTMLを構築して返す（品詞タブ付き）
+  function buildWordCardHtml(word, showMeaning) {
+    if (!word.parts || word.parts.length === 0) return '';
+
+    // 現在選択中の品詞インデックス（デフォルトは0）
+    var partIdx = activePartIndex[word.id] || 0;
+    if (partIdx >= word.parts.length) partIdx = 0;
+    var part = word.parts[partIdx];
+
+    // カードのクラス名（現在の品詞のお気に入り・苦手状態を反映）
+    var cardClasses = 'word-card';
+    if (part.isFavorite) cardClasses += ' is-favorite';
+    if (part.isWeak) cardClasses += ' is-weak';
+
+    // 品詞タブ（複数品詞がある場合のみ表示）
+    var tabsHtml = '';
+    if (word.parts.length > 1) {
+      var tabs = word.parts.map(function(p, i) {
+        var label = partOfSpeechLabels[p.partOfSpeech] || p.partOfSpeech;
+        var cls = 'pos-tab-btn' + (i === partIdx ? ' active' : '');
+        return '<button class="' + cls + '" onclick="selectWordPart(\'' + word.id + '\', ' + i + ')">'
+          + escapeHtml(label) + '</button>';
+      }).join('');
+      tabsHtml = '<div class="pos-tabs">' + tabs + '</div>';
+    } else {
+      // 品詞が1つの場合はバッジで表示
+      var posLabel = partOfSpeechLabels[part.partOfSpeech] || part.partOfSpeech;
+      tabsHtml = '<span class="pos-badge">' + escapeHtml(posLabel) + '</span>';
+    }
+
+    // お気に入り・苦手ボタン（現在の品詞用）
+    var favoriteClass = part.isFavorite ? 'flag-btn favorite-on' : 'flag-btn';
+    var favoriteLabel = part.isFavorite ? '★ お気に入り' : '☆ お気に入り';
+    var weakClass = part.isWeak ? 'flag-btn weak-on' : 'flag-btn';
+    var weakLabel = part.isWeak ? '！ 苦手' : '・ 苦手';
+
+    // 意味セクション
+    var meaningsHtml;
+    if (showMeaning) {
+      var meaningItems = part.meanings.map(function(m) {
+        return '<li>' + escapeHtml(m) + '</li>';
+      }).join('');
+      meaningsHtml = '<ul class="meanings-list">' + meaningItems + '</ul>';
+    } else {
+      meaningsHtml = '<p class="meaning-hidden-text">（意味を非表示中 — 暗記モード）</p>';
+    }
+
+    // 例文セクション（例文がある場合のみ表示）
+    var examplesHtml = '';
+    if (part.examples && part.examples.length > 0) {
+      var exampleItems = part.examples.map(function(ex) {
+        var engText = typeof ex === 'string' ? ex : (ex.english || '');
+        var jpText  = typeof ex === 'string' ? '' : (ex.japanese || '');
+        var html = '<li>';
+        if (engText) {
+          var engEscaped = escapeForAttr(engText);
+          html += '<div class="example-row">'
+            + '<div class="example-english">' + escapeHtml(engText) + '</div>'
+            + '<button class="copy-btn" onclick="copyExample(\'' + engEscaped + '\', this)" title="例文をコピー">コピー</button>'
+            + '</div>';
+        } else {
+          html += '<div class="example-english">' + escapeHtml(engText) + '</div>';
+        }
+        if (jpText) {
+          html += '<div class="example-japanese">' + escapeHtml(jpText) + '</div>';
+        }
+        html += '</li>';
+        return html;
+      }).join('');
+      examplesHtml = ''
+        + '<div class="card-section">'
+        + '<div class="card-section-label">例文</div>'
+        + '<ul class="examples-list">' + exampleItems + '</ul>'
+        + '</div>';
+    }
+
+    // クイズ成績（現在の品詞のもの）
+    var correct = typeof part.correct === 'number' ? part.correct : 0;
+    var wrong   = typeof part.wrong   === 'number' ? part.wrong   : 0;
+    var total   = correct + wrong;
+    var statsHtml;
+    if (total === 0) {
+      statsHtml = ''
+        + '<div class="card-stats">'
+        + '<span class="stat-item">正解: <span>0</span></span>'
+        + '<span class="stat-item">不正解: <span>0</span></span>'
+        + '<span class="stat-accuracy not-tried">未出題</span>'
+        + '</div>';
+    } else {
+      var rate = Math.round((correct / total) * 100);
+      var rateClass = rate >= 80 ? 'high' : rate >= 50 ? 'mid' : 'low';
+      statsHtml = ''
+        + '<div class="card-stats">'
+        + '<span class="stat-item">正解: <span>' + correct + '</span></span>'
+        + '<span class="stat-item">不正解: <span>' + wrong + '</span></span>'
+        + '<span class="stat-accuracy ' + rateClass + '">正答率 ' + rate + '%</span>'
+        + '</div>';
+    }
+
+    // 画像セクション（画像が登録されている場合のみ表示）
+    var imageHtml = '';
+    if (part.imageId) {
+      imageHtml = '<div class="card-image-area">'
+        + '<img class="card-image-img" data-image-id="' + escapeHtml(part.imageId) + '" alt="' + escapeHtml(word.word) + '">'
+        + '</div>';
+    }
+
+    var wordEscaped = escapeForAttr(word.word);
+    return ''
+      + '<div class="' + cardClasses + '" data-word-id="' + word.id + '">'
+      +   '<div class="card-header">'
+      +     '<div class="word-title-area">'
+      +       '<div class="word-title-row">'
+      +         '<div class="word-title">' + escapeHtml(word.word) + '</div>'
+      +         '<button class="copy-btn" onclick="copyWord(\'' + wordEscaped + '\', this)" title="単語をコピー">コピー</button>'
+      +       '</div>'
+      +       tabsHtml
+      +     '</div>'
+      +     '<div class="card-flag-buttons">'
+      +       '<button class="' + favoriteClass + '" onclick="toggleFavorite(\'' + word.id + '\', \'' + part.id + '\')">' + favoriteLabel + '</button>'
+      +       '<button class="' + weakClass + '" onclick="toggleWeak(\'' + word.id + '\', \'' + part.id + '\')">' + weakLabel + '</button>'
+      +     '</div>'
+      +   '</div>'
+      +   imageHtml
+      +   '<div class="card-section">'
+      +     '<div class="card-section-label">意味</div>'
+      +     meaningsHtml
+      +   '</div>'
+      +   examplesHtml
+      +   statsHtml
+      +   '<div class="card-actions">'
+      +     '<button class="btn-edit" onclick="startEditWord(\'' + word.id + '\', \'' + part.id + '\')">編集</button>'
+      +     '<button class="btn-delete" onclick="openDeleteModal(\'' + word.id + '\', \'' + part.id + '\')">削除</button>'
+      +   '</div>'
+      + '</div>';
+  }
+
+  // 品詞タブがクリックされたときに表示する品詞を切り替える
+  function selectWordPart(wordId, partIndex) {
+    activePartIndex[wordId] = partIndex;
+    renderWordList();
+  }
+
+  // 空の状態のHTMLを返す
+  function buildEmptyStateHtml(searchQuery) {
+    if (searchQuery || currentFilter !== 'all') {
+      return ''
+        + '<div class="empty-state">'
+        + '<div class="empty-state-icon">🔍</div>'
+        + '<p>条件に一致する単語が見つかりませんでした。</p>'
+        + '</div>';
+    }
+    return ''
+      + '<div class="empty-state">'
+      + '<div class="empty-state-icon">📚</div>'
+      + '<p>まだ単語が登録されていません。<br>「＋ 単語を追加する」から登録しましょう。</p>'
+      + '</div>';
+  }
+
+  // ===========================
+  // IndexedDB（画像ストレージ）
+  // ===========================
+
+  var IMAGE_DB_NAME = 'englishVocabImages';
+  var IMAGE_DB_VERSION = 1;
+  var IMAGE_STORE_NAME = 'images';
+  var imageDB = null; // 一度開いた DB 接続を再利用する
+
+  // DB を初期化して接続し、callback(db) を呼ぶ
+  function initImageDB(callback) {
+    if (imageDB) { callback(imageDB); return; }
+    var req = indexedDB.open(IMAGE_DB_NAME, IMAGE_DB_VERSION);
+    req.onupgradeneeded = function(e) {
+      var db = e.target.result;
+      if (!db.objectStoreNames.contains(IMAGE_STORE_NAME)) {
+        db.createObjectStore(IMAGE_STORE_NAME, { keyPath: 'id' });
+      }
+    };
+    req.onsuccess = function(e) {
+      imageDB = e.target.result;
+      callback(imageDB);
+    };
+    req.onerror = function() {
+      console.error('IndexedDB の初期化に失敗しました');
+      callback(null);
+    };
+  }
+
+  // 画像を IndexedDB に保存する（上書き）
+  function saveImageToDB(imageId, dataUrl, callback) {
+    initImageDB(function(db) {
+      if (!db) { if (callback) callback(false); return; }
+      var tx = db.transaction(IMAGE_STORE_NAME, 'readwrite');
+      var store = tx.objectStore(IMAGE_STORE_NAME);
+      var req = store.put({ id: imageId, dataUrl: dataUrl });
+      req.onsuccess = function() { if (callback) callback(true); };
+      req.onerror   = function() { if (callback) callback(false); };
+    });
+  }
+
+  // 画像を IndexedDB から取得し、callback(dataUrl | null) を呼ぶ
+  function getImageFromDB(imageId, callback) {
+    initImageDB(function(db) {
+      if (!db) { callback(null); return; }
+      var tx = db.transaction(IMAGE_STORE_NAME, 'readonly');
+      var store = tx.objectStore(IMAGE_STORE_NAME);
+      var req = store.get(imageId);
+      req.onsuccess = function() {
+        callback(req.result ? req.result.dataUrl : null);
+      };
+      req.onerror = function() { callback(null); };
+    });
+  }
+
+  // 画像を IndexedDB から削除する
+  function deleteImageFromDB(imageId, callback) {
+    if (!imageId) { if (callback) callback(); return; }
+    initImageDB(function(db) {
+      if (!db) { if (callback) callback(); return; }
+      var tx = db.transaction(IMAGE_STORE_NAME, 'readwrite');
+      var store = tx.objectStore(IMAGE_STORE_NAME);
+      store.delete(imageId);
+      tx.oncomplete = function() { if (callback) callback(); };
+      tx.onerror    = function() { if (callback) callback(); };
+    });
+  }
+
+  // ===========================
+  // 画像処理（縮小・保存）
+  // ===========================
+
+  // 読み込み済み画像のメモリキャッシュ（imageId → dataUrl）
+  var imageCache = {};
+
+  // File を最大 300×300 に縮小して dataUrl（WebP or JPEG）として返す
+  function resizeImage(file, callback) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var maxW = 300, maxH = 300;
+        var w = img.width, h = img.height;
+        if (w > maxW || h > maxH) {
+          var scale = Math.min(maxW / w, maxH / h);
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        // WebP を試み、失敗なら JPEG にフォールバック
+        var dataUrl = canvas.toDataURL('image/webp', 0.75);
+        if (!dataUrl || dataUrl === 'data:,') {
+          dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+        }
+        callback(dataUrl);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // File を縮小して IndexedDB に保存し、完了後に callback() を呼ぶ
+  function resizeAndSaveImage(file, imageId, callback) {
+    resizeImage(file, function(dataUrl) {
+      imageCache[imageId] = dataUrl; // メモリキャッシュにも保持する
+      saveImageToDB(imageId, dataUrl, function() {
+        callback();
+      });
+    });
+  }
+
+  // ===========================
+  // フォームの画像状態管理
+  // ===========================
+
+  // mode の意味:
+  //   'none'   → 画像なし（新規 or 既存に画像がなかった）
+  //   'keep'   → 既存画像をそのまま保持する
+  //   'new'    → ユーザーが新しいファイルを選択した
+  //   'delete' → 既存画像を削除予定
+  var formImageState = {
+    mode: 'none',
+    file: null,        // 選択された File オブジェクト（mode='new' のとき）
+    previewUrl: null,  // プレビュー用 URL（ObjectURL or dataUrl）
+    existingId: null   // 編集時の既存 imageId
+  };
+
+  // フォームの画像状態をリセットする
+  function resetFormImageState() {
+    // ObjectURL は明示的に解放する
+    if (formImageState.mode === 'new' && formImageState.previewUrl) {
+      URL.revokeObjectURL(formImageState.previewUrl);
+    }
+    formImageState = { mode: 'none', file: null, previewUrl: null, existingId: null };
+    updateImageFormUI();
+  }
+
+  // ファイル選択時の処理
+  function handleImageSelect(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    // 同じファイルを再選択できるようにリセット
+    event.target.value = '';
+    // 以前の ObjectURL があれば解放する
+    if (formImageState.mode === 'new' && formImageState.previewUrl) {
+      URL.revokeObjectURL(formImageState.previewUrl);
+    }
+    formImageState.mode = 'new';
+    formImageState.file = file;
+    formImageState.previewUrl = URL.createObjectURL(file);
+    updateImageFormUI();
+  }
+
+  // フォーム内の画像アクションボタンを押したときの処理
+  // ボタンのラベルと動作はモードによって変わる
+  function handleImageAction() {
+    var mode = formImageState.mode;
+    if (mode === 'new') {
+      // 新しい選択を取り消す
+      URL.revokeObjectURL(formImageState.previewUrl);
+      formImageState.file = null;
+      formImageState.previewUrl = null;
+      if (formImageState.existingId) {
+        // 既存画像があった場合は 'keep' に戻す
+        formImageState.mode = 'keep';
+        loadImageForForm(formImageState.existingId);
+      } else {
+        formImageState.mode = 'none';
+        updateImageFormUI();
+      }
+    } else if (mode === 'keep') {
+      // 既存画像を削除予定にする
+      formImageState.mode = 'delete';
+      formImageState.previewUrl = null;
+      updateImageFormUI();
+    } else if (mode === 'delete') {
+      // 削除を取り消して既存画像に戻す
+      formImageState.mode = 'keep';
+      loadImageForForm(formImageState.existingId);
+    }
+  }
+
+  // フォームの画像UIをモードに合わせて更新する
+  function updateImageFormUI() {
+    var previewEl = document.getElementById('imagePreview');
+    var noImageEl = document.getElementById('noImageText');
+    var actionBtn = document.getElementById('imageActionBtn');
+    if (!previewEl) return;
+
+    var mode = formImageState.mode;
+    if ((mode === 'new' || mode === 'keep') && formImageState.previewUrl) {
+      previewEl.src = formImageState.previewUrl;
+      previewEl.style.display = 'block';
+      noImageEl.style.display = 'none';
+      actionBtn.style.display = 'inline-block';
+      actionBtn.textContent = mode === 'new' ? '選択を取り消す' : '画像を削除';
+    } else if (mode === 'delete') {
+      previewEl.style.display = 'none';
+      noImageEl.textContent = '（削除予定）';
+      noImageEl.style.display = 'block';
+      actionBtn.textContent = '元に戻す';
+      actionBtn.style.display = 'inline-block';
+    } else {
+      // 'none'
+      previewEl.style.display = 'none';
+      noImageEl.textContent = '画像なし';
+      noImageEl.style.display = 'block';
+      actionBtn.style.display = 'none';
+    }
+  }
+
+  // 編集時に既存の画像を DB から読んでフォームに表示する
+  function loadImageForForm(imageId) {
+    if (!imageId) return;
+    if (imageCache[imageId]) {
+      formImageState.previewUrl = imageCache[imageId];
+      updateImageFormUI();
+      return;
+    }
+    getImageFromDB(imageId, function(dataUrl) {
+      if (dataUrl) {
+        imageCache[imageId] = dataUrl;
+        // まだ同じ画像が表示対象かどうか確認してから更新する
+        if (formImageState.existingId === imageId) {
+          formImageState.previewUrl = dataUrl;
+          updateImageFormUI();
+        }
+      }
+    });
+  }
+
+  // ===========================
+  // カード内の画像ロード
+  // ===========================
+
+  // カード一覧に含まれる data-image-id 属性を持つ img 要素に画像を読み込む
+  function loadCardImages() {
+    var imgs = document.querySelectorAll('.card-image-img[data-image-id]');
+    imgs.forEach(function(img) {
+      var imageId = img.getAttribute('data-image-id');
+      if (!imageId) return;
+      if (imageCache[imageId]) {
+        img.src = imageCache[imageId];
+        return;
+      }
+      // IndexedDB から非同期で取得してキャッシュする
+      getImageFromDB(imageId, function(dataUrl) {
+        if (!dataUrl) return;
+        imageCache[imageId] = dataUrl;
+        // 再描画されていないか確認してから反映する
+        var el = document.querySelector('.card-image-img[data-image-id="' + imageId + '"]');
+        if (el) el.src = dataUrl;
+      });
+    });
+  }
+
+  // ===========================
+  // クリップボードコピー
+  // ===========================
+
+  var toastTimer = null;
+
+  // トースト通知を表示する（指定メッセージを一定時間後に消す）
+  function showCopyToast(message) {
+    var toast = document.getElementById('copyToast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() {
+      toast.classList.remove('show');
+    }, 1800);
+  }
+
+  // テキストをクリップボードにコピーし、成功/失敗をトーストで通知する
+  function copyToClipboard(text, successMsg, btnEl) {
+    var trimmed = text.trim();
+
+    // コピー成功時の共通処理
+    function onSuccess() {
+      showCopyToast(successMsg);
+      if (btnEl) {
+        btnEl.classList.add('copied');
+        setTimeout(function() { btnEl.classList.remove('copied'); }, 1500);
+      }
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(trimmed).then(onSuccess, function() {
+        showCopyToast('コピーに失敗しました');
+      });
+    } else {
+      // フォールバック: execCommand（古いブラウザ向け）
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = trimmed;
+        ta.style.position = 'fixed';
+        ta.style.top = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) { onSuccess(); } else { showCopyToast('コピーに失敗しました'); }
+      } catch (e) {
+        showCopyToast('コピーに対応していません');
+      }
+    }
+  }
+
+  // 単語をコピーする
+  function copyWord(text, btnEl) {
+    copyToClipboard(text, '単語をコピーしました', btnEl);
+  }
+
+  // 例文をコピーする
+  function copyExample(text, btnEl) {
+    copyToClipboard(text, '例文をコピーしました', btnEl);
+  }
+
+  // ===========================
+  // ユーティリティ関数
+  // ===========================
+
+  // XSS対策：HTMLエスケープ
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // エラーメッセージを表示する
+  function showError(elementId, message) {
+    var el = document.getElementById(elementId);
+    el.textContent = message;
+    el.style.display = 'block';
+  }
+
+  // エラーメッセージを非表示にする
+  function hideError(elementId) {
+    var el = document.getElementById(elementId);
+    el.style.display = 'none';
+  }
+
+  // ===========================
+  // モーダルの外側クリックで閉じる
+  // ===========================
+
+  document.getElementById('deleteModal').addEventListener('click', function(event) {
+    if (event.target === this) {
+      closeDeleteModal();
+    }
+  });
+
+  // ===========================
+  // クイズ機能
+  // ===========================
+
+  // 単語リストを「品詞ごとのフラットなアイテム」に展開する（クイズで使用）
+  // 各アイテムは旧 wordList の1エントリと同じ形状で、quiz 関数を変更なく再利用できる
+  function buildFlatPartList() {
+    var result = [];
+    wordList.forEach(function(word) {
+      word.parts.forEach(function(part) {
+        result.push({
+          id: part.id,             // part レベルの ID（recordQuizResult で使用）
+          word: word.word,         // 英単語の文字列
+          partOfSpeech: part.partOfSpeech,
+          meanings: part.meanings,
+          examples: part.examples,
+          isFavorite: part.isFavorite,
+          isWeak: part.isWeak,
+          correct: part.correct,
+          wrong: part.wrong
+        });
+      });
+    });
+    return result;
+  }
+
+  // クイズの状態管理
+  var quizState = {
+    isActive: false,          // クイズ中かどうか
+    currentWord: null,        // 現在の問題単語
+    currentExample: null,     // 英文入力クイズ用：現在の例文ペア { english, japanese }
+    recentWordIds: [],        // 直近に出題したIDのリスト（連続防止用）
+    recentSentenceKeys: [],   // 英文入力クイズ用：直近に出題した例文のキーリスト
+    recentExQuizKeys: [],     // 例文クイズ用：直近に出題した例文のキーリスト
+    recentFillBlankKeys: [],  // 例文穴埋めクイズ用：直近に出題した例文のキーリスト
+    answered: false,          // 現在の問題が回答済みかどうか
+    mode: 'random',           // 出題モード
+    selectedPos: 'noun',      // 品詞別モードで選択中の品詞
+    quizType: 'choice'        // クイズの種類：'choice'（4択）/ 'spell'（スペル入力）/ 'sentence'（英文入力）/ 'exquiz'（例文クイズ）
+  };
+
+  // 最近出題した問題の記憶数（この数だけ同じ問題が出にくくなる）
+  var QUIZ_RECENT_MEMORY = 5;
+
+  // クイズ種別の定義
+  var QUIZ_TYPES = [
+    { value: 'choice',    label: '4択クイズ' },
+    { value: 'spell',     label: 'スペル入力' },
+    { value: 'sentence',  label: '英文入力' },
+    { value: 'exquiz',    label: '例文クイズ' },
+    { value: 'fillblank', label: '例文穴埋め' }
+  ];
+
+  // 出題モードの定義
+  var QUIZ_MODES = [
+    { value: 'random',   label: '完全ランダム' },
+    { value: 'pos',      label: '品詞別' },
+    { value: 'weak',     label: '苦手優先' },
+    { value: 'favorite', label: 'お気に入り' },
+    { value: 'lowRate',  label: '低正答率優先' }
+  ];
+
+  // クイズセクションの表示・非表示を切り替える
+  function handleQuizToggle() {
+    var quizSection = document.getElementById('quizSection');
+    var isVisible = quizSection.style.display !== 'none';
+    if (isVisible) {
+      stopQuiz();
+    } else {
+      openQuizSection();
+    }
+  }
+
+  // クイズセクションを開いてモード選択画面を表示する
+  function openQuizSection() {
+    cancelForm();
+    var quizSection = document.getElementById('quizSection');
+    quizSection.style.display = 'block';
+    document.getElementById('openQuizBtn').textContent = '✕ クイズを終了';
+    quizSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    renderQuizModeSelector();
+  }
+
+  // クイズを終了してセクションを閉じる
+  function stopQuiz() {
+    quizState.isActive = false;
+    quizState.currentWord = null;
+    quizState.currentExample = null;
+    document.getElementById('quizSection').style.display = 'none';
+    document.getElementById('openQuizBtn').textContent = 'クイズを始める';
+  }
+
+  // モード選択UIを描画する
+  function renderQuizModeSelector() {
+    // クイズ本体エリアをリセット
+    document.getElementById('quizMessage').textContent = '';
+    document.getElementById('quizContent').innerHTML = '';
+
+    // タイトルをリセット
+    document.getElementById('quizTitle').textContent = 'クイズ';
+
+    // ── クイズ種別ボタン（4択 / スペル入力）──
+    var typeBtns = QUIZ_TYPES.map(function(t) {
+      var cls = 'quiz-mode-btn' + (quizState.quizType === t.value ? ' selected' : '');
+      return '<button class="' + cls + '" onclick="selectQuizType(\'' + t.value + '\')">' + t.label + '</button>';
+    }).join('');
+
+    // ── 出題モードボタン ──
+    var modeBtns = QUIZ_MODES.map(function(m) {
+      var cls = 'quiz-mode-btn' + (quizState.mode === m.value ? ' selected' : '');
+      return '<button class="' + cls + '" onclick="selectQuizMode(\'' + m.value + '\')">' + m.label + '</button>';
+    }).join('');
+
+    // 品詞別のときだけ品詞選択を表示
+    var posRowHtml = '';
+    if (quizState.mode === 'pos') {
+      var posOptions = Object.keys(partOfSpeechLabels).map(function(key) {
+        var selected = quizState.selectedPos === key ? ' selected' : '';
+        return '<option value="' + key + '"' + selected + '>' + escapeHtml(partOfSpeechLabels[key]) + '</option>';
+      }).join('');
+      posRowHtml = '<div class="quiz-pos-select-row">'
+        + '<label>品詞:</label>'
+        + '<select id="quizPosSelect" onchange="quizState.selectedPos = this.value">' + posOptions + '</select>'
+        + '</div>';
+    }
+
+    document.getElementById('quizModeArea').innerHTML = ''
+      + '<div class="quiz-type-group">'
+      +   '<div class="quiz-mode-row-label">クイズの種類</div>'
+      +   '<div class="quiz-mode-buttons">' + typeBtns + '</div>'
+      + '</div>'
+      + '<div class="quiz-mode-group">'
+      +   '<div class="quiz-mode-row-label">出題モード</div>'
+      +   '<div class="quiz-mode-buttons">' + modeBtns + '</div>'
+      +   posRowHtml
+      + '</div>'
+      + '<div class="quiz-mode-error" id="quizModeError"></div>'
+      + '<button class="quiz-start-btn" onclick="startQuizWithMode()">クイズを開始する</button>';
+  }
+
+  // クイズ種別ボタンを選択したときの処理
+  function selectQuizType(type) {
+    quizState.quizType = type;
+    renderQuizModeSelector();
+  }
+
+  // 出題モードボタンを選択したときの処理
+  function selectQuizMode(mode) {
+    quizState.mode = mode;
+    renderQuizModeSelector();
+  }
+
+  // モード選択後にクイズを開始する
+  function startQuizWithMode() {
+    var quizType = quizState.quizType;
+
+    var flatList = buildFlatPartList();
+
+    if (quizType === 'sentence') {
+      // 英文入力クイズ：日本語訳付き例文を持つ品詞が対象
+      var sentenceWordPool = flatList.filter(function(w) { return hasSentence(w); });
+      if (sentenceWordPool.length === 0) {
+        showModeError('英文入力クイズには、日本語訳が登録された例文が必要です。\n例文登録時に日本語訳も入力してください。');
+        return;
+      }
+      var pool = buildQuizPool(sentenceWordPool, flatList);
+      if (pool === null) return;
+    } else if (quizType === 'exquiz') {
+      // 例文クイズ：日本語訳付き例文を持つ品詞が対象
+      var exWordPool = flatList.filter(function(w) { return hasSentence(w); });
+      if (exWordPool.length === 0) {
+        showModeError('例文クイズには、日本語訳が登録された例文が必要です。\n例文登録時に日本語訳も入力してください。');
+        return;
+      }
+      var exPool = buildQuizPool(exWordPool, flatList);
+      if (exPool === null) return;
+      var exItems = buildSentencePool(exPool);
+      var distinctJa = getDistinctJapanese(exItems);
+      if (distinctJa.length < 4) {
+        showModeError('例文クイズには、異なる日本語訳が4つ以上必要です。（現在 ' + distinctJa.length + ' 種）');
+        return;
+      }
+    } else if (quizType === 'fillblank') {
+      // 例文穴埋めクイズ：その単語が含まれた日本語訳付き例文を持つ品詞が対象
+      var fbWordPool = flatList.filter(function(w) { return hasFillBlankExample(w); });
+      if (fbWordPool.length === 0) {
+        showModeError('例文穴埋めクイズには、単語本体が含まれた例文（日本語訳付き）が必要です。\n例文中に登録単語が含まれていることを確認してください。');
+        return;
+      }
+      var fbPool = buildQuizPool(fbWordPool, flatList);
+      if (fbPool === null) return;
+    } else {
+      // 4択・スペル入力クイズ：意味が登録された品詞が対象
+      var allCandidates = flatList.filter(function(w) {
+        return w.meanings && w.meanings.length > 0;
+      });
+      var minRequired = quizType === 'spell' ? 1 : 4;
+      if (allCandidates.length < minRequired) {
+        var msg = quizType === 'spell'
+          ? '出題できる単語がありません。まず単語を登録してください。'
+          : 'クイズを開始するには、意味が登録された単語が4つ以上必要です。（現在 ' + allCandidates.length + ' 語）';
+        showModeError(msg);
+        return;
+      }
+      var pool = buildQuizPool(allCandidates, flatList);
+      if (pool === null) return;
+    }
+
+    // タイトルを種別に合わせて更新する
+    var titleMap = { choice: '4択クイズ', spell: 'スペル入力クイズ', sentence: '英文入力クイズ', exquiz: '例文クイズ', fillblank: '例文穴埋めクイズ' };
+    document.getElementById('quizTitle').textContent = titleMap[quizType] || 'クイズ';
+
+    // モード選択UIを隠してクイズ本体を開始する
+    document.getElementById('quizModeArea').style.display = 'none';
+    quizState.isActive = true;
+    quizState.recentWordIds = [];
+    quizState.recentSentenceKeys = [];
+    quizState.recentExQuizKeys = [];
+    quizState.recentFillBlankKeys = [];
+    showNextQuestion();
+  }
+
+  // モード選択エリアにエラーを表示する
+  function showModeError(message) {
+    var el = document.getElementById('quizModeError');
+    if (!el) return;
+    el.textContent = message;
+    el.style.display = 'block';
+  }
+
+  // 次の問題を表示する（4択・スペル入力・英文入力で共通のエントリポイント）
+  function showNextQuestion() {
+    // 英文入力クイズは専用の関数に委譲する
+    if (quizState.quizType === 'sentence') {
+      showNextSentenceQuestion();
+      return;
+    }
+
+    // 例文クイズは専用の関数に委譲する
+    if (quizState.quizType === 'exquiz') {
+      showNextExQuizQuestion();
+      return;
+    }
+
+    // 例文穴埋めクイズは専用の関数に委譲する
+    if (quizState.quizType === 'fillblank') {
+      showNextFillBlankQuestion();
+      return;
+    }
+
+    // 全候補（意味あり・flat part list）
+    var flatList = buildFlatPartList();
+    var allCandidates = flatList.filter(function(w) {
+      return w.meanings && w.meanings.length > 0;
+    });
+
+    // 4択は4品詞以上、スペル入力は1品詞以上必要
+    var minRequired = quizState.quizType === 'spell' ? 1 : 4;
+    if (allCandidates.length < minRequired) {
+      renderQuizError('出題できる単語が足りなくなりました。');
+      return;
+    }
+
+    // モード別フィルタリング
+    var pool = buildQuizPool(allCandidates, flatList);
+    if (pool === null) return;
+
+    // 直近に出題したIDを除いた候補（連続防止）
+    var freshPool = pool.filter(function(w) {
+      return quizState.recentWordIds.indexOf(w.id) === -1;
+    });
+    if (freshPool.length === 0) {
+      freshPool = pool; // 全部 recent に入っていたらリセット扱い
+    }
+
+    // 重み付きランダムで問題単語を選ぶ
+    var questionWord = selectWeightedWord(freshPool);
+    quizState.currentWord = questionWord;
+
+    // 直近出題リストを更新する
+    quizState.recentWordIds.push(questionWord.id);
+    if (quizState.recentWordIds.length > QUIZ_RECENT_MEMORY) {
+      quizState.recentWordIds.shift();
+    }
+
+    // 出題する意味をランダムに1つ選ぶ（4択・スペル共通）
+    var questionMeaning = questionWord.meanings[Math.floor(Math.random() * questionWord.meanings.length)];
+
+    quizState.answered = false;
+
+    if (quizState.quizType === 'spell') {
+      // スペル入力クイズ
+      renderSpellQuestion(questionWord, questionMeaning);
+    } else {
+      // 4択クイズ：不正解の意味を全候補から集める
+      var otherWords = allCandidates.filter(function(w) { return w.id !== questionWord.id; });
+      var wrongMeanings = pickWrongMeanings(otherWords, questionMeaning, 3);
+      var choices = shuffleArray([questionMeaning].concat(wrongMeanings));
+      renderQuizQuestion(questionWord, questionMeaning, choices);
+    }
+  }
+
+  // モードに応じた出題プールを返す（エラー時はnull）
+  // allCandidates: 対象の flat part アイテム配列
+  // flatList: 全品詞の flat part アイテム配列（エラー判定の基準数に使用）
+  function buildQuizPool(allCandidates, flatList) {
+    var mode = quizState.mode;
+
+    if (mode === 'weak') {
+      var pool = allCandidates.filter(function(w) { return w.isWeak; });
+      if (pool.length === 0) {
+        renderQuizError('苦手フラグが付いた単語がありません。\n単語カードの「苦手」ボタンで登録してください。');
+        return null;
+      }
+      return pool;
+    }
+
+    if (mode === 'favorite') {
+      var pool = allCandidates.filter(function(w) { return w.isFavorite; });
+      if (pool.length === 0) {
+        renderQuizError('お気に入り登録された単語がありません。\n単語カードの「お気に入り」ボタンで登録してください。');
+        return null;
+      }
+      return pool;
+    }
+
+    if (mode === 'pos') {
+      var pool = allCandidates.filter(function(w) { return w.partOfSpeech === quizState.selectedPos; });
+      if (pool.length === 0) {
+        var posLabel = partOfSpeechLabels[quizState.selectedPos] || quizState.selectedPos;
+        renderQuizError('「' + posLabel + '」の単語が登録されていません。');
+        return null;
+      }
+      return pool;
+    }
+
+    // random, lowRate はフィルタなし（全候補）
+    return allCandidates;
+  }
+
+  // 重み付きランダムで単語を1つ選ぶ
+  // 未出題 → 高重み、正答率が低い → 高重み
+  function selectWeightedWord(candidates) {
+    var isLowRateMode = (quizState.mode === 'lowRate');
+
+    // 各単語の重みを計算する
+    var weights = candidates.map(function(word) {
+      var c     = typeof word.correct === 'number' ? word.correct : 0;
+      var w     = typeof word.wrong   === 'number' ? word.wrong   : 0;
+      var total = c + w;
+
+      if (total === 0) {
+        // 未出題は最優先
+        return isLowRateMode ? 10 : 5;
+      }
+
+      var rate = c / total; // 0.0〜1.0（正答率）
+
+      if (isLowRateMode) {
+        // 低正答率モード：差を大きくする
+        if (rate < 0.4) return 8;
+        if (rate < 0.6) return 4;
+        if (rate < 0.8) return 2;
+        return 1;
+      } else {
+        // その他のモード：緩やかな重み付け
+        if (rate < 0.5) return 3;
+        if (rate < 0.8) return 2;
+        return 1;
+      }
+    });
+
+    // 重みの合計を出してルーレット選択する
+    var totalWeight = 0;
+    weights.forEach(function(w) { totalWeight += w; });
+
+    var rand = Math.random() * totalWeight;
+    var cumulative = 0;
+    for (var i = 0; i < candidates.length; i++) {
+      cumulative += weights[i];
+      if (rand <= cumulative) {
+        return candidates[i];
+      }
+    }
+    return candidates[candidates.length - 1]; // フォールバック
+  }
+
+  // 他の単語から不正解の選択肢を集める
+  function pickWrongMeanings(otherWords, correctMeaning, count) {
+    // 全意味を候補として集める（正解と重複するものは除く）
+    var allMeanings = [];
+    otherWords.forEach(function(w) {
+      w.meanings.forEach(function(m) {
+        if (m !== correctMeaning && allMeanings.indexOf(m) === -1) {
+          allMeanings.push(m);
+        }
+      });
+    });
+
+    // ランダムに count 個取り出す
+    var shuffled = shuffleArray(allMeanings);
+    return shuffled.slice(0, count);
+  }
+
+  // 配列をランダムに並び替えて返す（Fisher-Yates法）
+  function shuffleArray(arr) {
+    var result = arr.slice(); // 元配列を壊さないようコピー
+    for (var i = result.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = result[i];
+      result[i] = result[j];
+      result[j] = temp;
+    }
+    return result;
+  }
+
+  // クイズの問題画面を描画する
+  function renderQuizQuestion(questionWord, correctMeaning, choices) {
+    var posLabel = partOfSpeechLabels[questionWord.partOfSpeech] || questionWord.partOfSpeech;
+
+    // 選択肢ボタンのHTML
+    var choiceButtons = choices.map(function(choice) {
+      return '<button class="quiz-choice-btn"'
+        + ' onclick="handleChoiceClick(this, \'' + escapeForAttr(choice) + '\', \'' + escapeForAttr(correctMeaning) + '\')">'
+        + escapeHtml(choice)
+        + '</button>';
+    }).join('');
+
+    var html = ''
+      + '<div class="quiz-question-word">' + escapeHtml(questionWord.word) + '</div>'
+      + '<div class="quiz-question-pos"><span class="pos-badge">' + escapeHtml(posLabel) + '</span></div>'
+      + '<div class="quiz-choices">' + choiceButtons + '</div>'
+      + '<div class="quiz-feedback" id="quizFeedback"></div>';
+
+    document.getElementById('quizMessage').textContent = 'この単語の意味はどれ？';
+    document.getElementById('quizContent').innerHTML = html;
+  }
+
+  // クイズ成績を記録してlocalStorageに保存する（partId で品詞を特定する）
+  function recordQuizResult(partId, isCorrect) {
+    var found = false;
+    wordList.forEach(function(word) {
+      word.parts.forEach(function(part) {
+        if (part.id === partId) {
+          if (typeof part.correct !== 'number') part.correct = 0;
+          if (typeof part.wrong   !== 'number') part.wrong   = 0;
+          if (isCorrect) { part.correct += 1; } else { part.wrong += 1; }
+          found = true;
+        }
+      });
+    });
+    if (!found) return;
+    saveWords();
+    // 一覧の成績表示をリアルタイムで更新する
+    renderWordList();
+  }
+
+  // 選択肢ボタンを押したときの処理（4択クイズ）
+  function handleChoiceClick(clickedBtn, selected, correct) {
+    // 回答済みなら何もしない
+    if (quizState.answered) return;
+    quizState.answered = true;
+
+    var isCorrect = (selected === correct);
+
+    // 成績を記録する
+    if (quizState.currentWord) {
+      recordQuizResult(quizState.currentWord.id, isCorrect);
+    }
+
+    // 全ての選択肢ボタンを取得して状態を反映する
+    var allBtns = document.querySelectorAll('.quiz-choice-btn');
+    allBtns.forEach(function(btn) {
+      btn.disabled = true;
+      // onclick属性から正解の意味を取り出す（正解ボタンに色を付ける）
+      var btnSelected = btn.getAttribute('onclick').match(/handleChoiceClick\(this, '(.+?)', '(.+?)'\)/);
+      if (btnSelected && btnSelected[1] === correct) {
+        btn.classList.add('correct');
+      }
+    });
+
+    // 不正解の場合は選んだボタンに wrong クラスを追加
+    if (!isCorrect) {
+      clickedBtn.classList.add('wrong');
+    }
+
+    // フィードバックメッセージを表示
+    var feedbackEl = document.getElementById('quizFeedback');
+    if (isCorrect) {
+      feedbackEl.textContent = '正解！';
+      feedbackEl.className = 'quiz-feedback correct';
+    } else {
+      feedbackEl.textContent = '不正解… 正解は「' + correct + '」';
+      feedbackEl.className = 'quiz-feedback wrong';
+    }
+
+    // 「次の問題へ」「クイズを終了」ボタンを追加
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'quiz-next-btn';
+    nextBtn.textContent = '次の問題へ';
+    nextBtn.onclick = showNextQuestion;
+
+    var endBtn = document.createElement('button');
+    endBtn.className = 'quiz-end-btn';
+    endBtn.textContent = 'クイズを終了する';
+    endBtn.onclick = stopQuiz;
+
+    document.getElementById('quizContent').appendChild(nextBtn);
+    document.getElementById('quizContent').appendChild(endBtn);
+  }
+
+  // スペル入力クイズの問題画面を描画する
+  function renderSpellQuestion(questionWord, questionMeaning) {
+    var posLabel = partOfSpeechLabels[questionWord.partOfSpeech] || questionWord.partOfSpeech;
+
+    var html = ''
+      + '<div class="quiz-question-meaning">' + escapeHtml(questionMeaning) + '</div>'
+      + '<div class="quiz-question-hint"><span class="pos-badge">' + escapeHtml(posLabel) + '</span></div>'
+      + '<div class="spell-input-area">'
+      +   '<input type="text" class="spell-input" id="spellInput"'
+      +     ' placeholder="英単語を入力..." autocomplete="off" autocapitalize="none" spellcheck="false">'
+      +   '<button class="spell-submit-btn" id="spellSubmitBtn" onclick="handleSpellSubmit()">解答</button>'
+      + '</div>'
+      + '<div class="quiz-feedback" id="quizFeedback"></div>';
+
+    document.getElementById('quizMessage').textContent = 'この意味の英単語は？';
+    document.getElementById('quizContent').innerHTML = html;
+
+    // Enterキーでも解答できるようにする
+    document.getElementById('spellInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleSpellSubmit();
+    });
+
+    // 自動フォーカス
+    document.getElementById('spellInput').focus();
+  }
+
+  // スペル入力の解答ボタンを押したときの処理
+  function handleSpellSubmit() {
+    if (quizState.answered) return;
+
+    var inputEl = document.getElementById('spellInput');
+    if (!inputEl) return;
+
+    var inputValue = inputEl.value.trim();
+    if (!inputValue) return; // 空欄は無視する
+
+    var questionWord = quizState.currentWord;
+    if (!questionWord) return;
+
+    // 大文字小文字を無視して完全一致で判定する
+    var isCorrect = inputValue.toLowerCase() === questionWord.word.toLowerCase();
+    quizState.answered = true;
+
+    // 入力欄と解答ボタンを無効化する
+    inputEl.disabled = true;
+    var submitBtn = document.getElementById('spellSubmitBtn');
+    if (submitBtn) submitBtn.disabled = true;
+
+    // 成績を記録する
+    recordQuizResult(questionWord.id, isCorrect);
+
+    // フィードバックを表示する
+    var feedbackEl = document.getElementById('quizFeedback');
+    var contentEl  = document.getElementById('quizContent');
+
+    if (isCorrect) {
+      feedbackEl.textContent = '正解！';
+      feedbackEl.className = 'quiz-feedback correct';
+    } else {
+      feedbackEl.textContent = '不正解…';
+      feedbackEl.className = 'quiz-feedback wrong';
+
+      // 不正解時は正解の英単語・品詞・意味一覧を表示する
+      var posLabel = partOfSpeechLabels[questionWord.partOfSpeech] || questionWord.partOfSpeech;
+      var meaningsHtml = questionWord.meanings.map(function(m) {
+        return '<li>' + escapeHtml(m) + '</li>';
+      }).join('');
+
+      var detailDiv = document.createElement('div');
+      detailDiv.className = 'spell-answer-detail';
+      detailDiv.innerHTML = ''
+        + '<div class="spell-answer-word">'
+        +   escapeHtml(questionWord.word)
+        +   ' <span class="pos-badge">' + escapeHtml(posLabel) + '</span>'
+        + '</div>'
+        + '<div class="spell-answer-meanings">'
+        +   '<ul class="meanings-list">' + meaningsHtml + '</ul>'
+        + '</div>';
+      contentEl.appendChild(detailDiv);
+    }
+
+    // 「次の問題へ」「クイズを終了する」ボタンを追加する
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'quiz-next-btn';
+    nextBtn.textContent = '次の問題へ';
+    nextBtn.onclick = showNextQuestion;
+
+    var endBtn = document.createElement('button');
+    endBtn.className = 'quiz-end-btn';
+    endBtn.textContent = 'クイズを終了する';
+    endBtn.onclick = stopQuiz;
+
+    contentEl.appendChild(nextBtn);
+    contentEl.appendChild(endBtn);
+  }
+
+  // ===========================
+  // 英文入力クイズ
+  // ===========================
+
+  // 単語が有効な例文（英文・日本語訳の両方あり）を持つか確認する
+  function hasSentence(word) {
+    if (!word.examples || word.examples.length === 0) return false;
+    return word.examples.some(function(ex) {
+      var eng = typeof ex === 'string' ? ex : (ex.english || '');
+      var jpn = typeof ex === 'string' ? '' : (ex.japanese || '');
+      return eng && jpn;
+    });
+  }
+
+  // 単語から有効な例文ペア { english, japanese } の配列を返す
+  function getValidExamples(word) {
+    if (!word.examples) return [];
+    return word.examples.reduce(function(acc, ex) {
+      var eng = typeof ex === 'string' ? ex : (ex.english || '');
+      var jpn = typeof ex === 'string' ? '' : (ex.japanese || '');
+      if (eng && jpn) {
+        acc.push({ english: eng, japanese: jpn });
+      }
+      return acc;
+    }, []);
+  }
+
+  // 単語プールから出題候補 { word, english, japanese } の平坦なリストを作る
+  function buildSentencePool(wordPool) {
+    var items = [];
+    wordPool.forEach(function(word) {
+      getValidExamples(word).forEach(function(ex) {
+        items.push({ word: word, english: ex.english, japanese: ex.japanese });
+      });
+    });
+    return items;
+  }
+
+  // 例文アイテムを重み付きランダムで1つ選ぶ（単語の成績を重みに使う）
+  function selectWeightedSentenceItem(items) {
+    var isLowRateMode = (quizState.mode === 'lowRate');
+    var weights = items.map(function(item) {
+      var word  = item.word;
+      var c     = typeof word.correct === 'number' ? word.correct : 0;
+      var w     = typeof word.wrong   === 'number' ? word.wrong   : 0;
+      var total = c + w;
+      if (total === 0) return isLowRateMode ? 10 : 5;
+      var rate = c / total;
+      if (isLowRateMode) {
+        if (rate < 0.4) return 8;
+        if (rate < 0.6) return 4;
+        if (rate < 0.8) return 2;
+        return 1;
+      } else {
+        if (rate < 0.5) return 3;
+        if (rate < 0.8) return 2;
+        return 1;
+      }
+    });
+    var totalWeight = 0;
+    weights.forEach(function(w) { totalWeight += w; });
+    var rand = Math.random() * totalWeight;
+    var cumulative = 0;
+    for (var i = 0; i < items.length; i++) {
+      cumulative += weights[i];
+      if (rand <= cumulative) return items[i];
+    }
+    return items[items.length - 1];
+  }
+
+  // 英文入力クイズの次の問題を選んで表示する
+  function showNextSentenceQuestion() {
+    var flatList = buildFlatPartList();
+    // 日本語訳付き例文を持つ品詞を集める
+    var sentenceWordPool = flatList.filter(function(w) { return hasSentence(w); });
+    if (sentenceWordPool.length === 0) {
+      renderQuizError('英文入力クイズには、日本語訳が登録された例文が必要です。');
+      return;
+    }
+
+    // 出題モードに応じたフィルタリング（buildQuizPool を再利用）
+    var filteredWordPool = buildQuizPool(sentenceWordPool, flatList);
+    if (filteredWordPool === null) return;
+
+    // 例文の平坦なリストを作る
+    var sentenceItems = buildSentencePool(filteredWordPool);
+    if (sentenceItems.length === 0) {
+      renderQuizError('出題できる例文がありません。');
+      return;
+    }
+
+    // 直近に出題した例文を除いた候補（連続防止）
+    var freshItems = sentenceItems.filter(function(item) {
+      var key = item.word.id + '|' + item.english;
+      return quizState.recentSentenceKeys.indexOf(key) === -1;
+    });
+    if (freshItems.length === 0) {
+      freshItems = sentenceItems; // 全て recent に入っていたらリセット
+    }
+
+    // 重み付きランダムで例文を選ぶ
+    var selected = selectWeightedSentenceItem(freshItems);
+    quizState.currentWord    = selected.word;
+    quizState.currentExample = { english: selected.english, japanese: selected.japanese };
+
+    // 直近リストを更新する
+    var key = selected.word.id + '|' + selected.english;
+    quizState.recentSentenceKeys.push(key);
+    if (quizState.recentSentenceKeys.length > QUIZ_RECENT_MEMORY) {
+      quizState.recentSentenceKeys.shift();
+    }
+
+    quizState.answered = false;
+    renderSentenceQuestion(selected);
+  }
+
+  // 英文のアンダーバーヒントを生成する
+  // アルファベットを _ に置換し、スペース・句読点はそのまま残す
+  // 例: "I play soccer." → "_ ____ ______."
+  function buildSentenceHint(text) {
+    var result = '';
+    for (var i = 0; i < text.length; i++) {
+      result += /[a-zA-Z]/.test(text[i]) ? '_' : text[i];
+    }
+    return result;
+  }
+
+  // 正解判定用に英文を正規化する（前後空白・大文字小文字・文末句読点を無視）
+  function normalizeSentence(str) {
+    str = str.trim().toLowerCase();
+    str = str.replace(/[.!?,;:]+$/, ''); // 文末の句読点を除去
+    str = str.replace(/\s+/g, ' ').trim();
+    return str;
+  }
+
+  // 英文入力クイズの問題画面を描画する
+  function renderSentenceQuestion(item) {
+    var hint = buildSentenceHint(item.english);
+
+    var html = ''
+      + '<div class="quiz-question-meaning">' + escapeHtml(item.japanese) + '</div>'
+      + '<div class="sentence-hint-box">'
+      +   '<span class="sentence-hint-label">文字数ヒント:</span>'
+      +   '<span class="sentence-hint">' + escapeHtml(hint) + '</span>'
+      + '</div>'
+      + '<div class="spell-input-area">'
+      +   '<input type="text" class="spell-input" id="sentenceInput"'
+      +     ' placeholder="英文を入力..." autocomplete="off" autocapitalize="none" spellcheck="false">'
+      +   '<button class="spell-submit-btn" id="sentenceSubmitBtn" onclick="handleSentenceSubmit()">解答</button>'
+      + '</div>'
+      + '<div class="quiz-feedback" id="quizFeedback"></div>';
+
+    document.getElementById('quizMessage').textContent = 'この日本語訳に対応する英文は？';
+    document.getElementById('quizContent').innerHTML = html;
+
+    // Enterキーでも解答できるようにする
+    document.getElementById('sentenceInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleSentenceSubmit();
+    });
+
+    // 自動フォーカス
+    document.getElementById('sentenceInput').focus();
+  }
+
+  // 英文入力クイズの解答を判定する
+  function handleSentenceSubmit() {
+    if (quizState.answered) return;
+
+    var inputEl = document.getElementById('sentenceInput');
+    if (!inputEl) return;
+
+    var inputValue = inputEl.value.trim();
+    if (!inputValue) return; // 空欄は無視する
+
+    var currentExample = quizState.currentExample;
+    var questionWord   = quizState.currentWord;
+    if (!currentExample || !questionWord) return;
+
+    // 正規化して比較する（大文字小文字・文末句読点を無視）
+    var isCorrect = normalizeSentence(inputValue) === normalizeSentence(currentExample.english);
+    quizState.answered = true;
+
+    // 入力欄と解答ボタンを無効化する
+    inputEl.disabled = true;
+    var submitBtn = document.getElementById('sentenceSubmitBtn');
+    if (submitBtn) submitBtn.disabled = true;
+
+    // 成績を記録する（単語レベルで記録）
+    recordQuizResult(questionWord.id, isCorrect);
+
+    var feedbackEl = document.getElementById('quizFeedback');
+    var contentEl  = document.getElementById('quizContent');
+
+    if (isCorrect) {
+      feedbackEl.textContent = '正解！';
+      feedbackEl.className = 'quiz-feedback correct';
+    } else {
+      feedbackEl.textContent = '不正解…';
+      feedbackEl.className = 'quiz-feedback wrong';
+
+      // 不正解時は正解の英文と日本語訳を表示する
+      var detailDiv = document.createElement('div');
+      detailDiv.className = 'spell-answer-detail';
+      detailDiv.innerHTML = ''
+        + '<div class="spell-answer-word" style="font-size:0.95rem; font-weight:600;">'
+        +   escapeHtml(currentExample.english)
+        + '</div>'
+        + '<div class="spell-answer-meanings" style="margin-top:5px;">'
+        +   '<span style="color:#999; font-size:0.85rem;">' + escapeHtml(currentExample.japanese) + '</span>'
+        + '</div>';
+      contentEl.appendChild(detailDiv);
+    }
+
+    // 「次の問題へ」「クイズを終了する」ボタンを追加する
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'quiz-next-btn';
+    nextBtn.textContent = '次の問題へ';
+    nextBtn.onclick = showNextQuestion;
+
+    var endBtn = document.createElement('button');
+    endBtn.className = 'quiz-end-btn';
+    endBtn.textContent = 'クイズを終了する';
+    endBtn.onclick = stopQuiz;
+
+    contentEl.appendChild(nextBtn);
+    contentEl.appendChild(endBtn);
+  }
+
+  // ===========================
+  // 例文穴埋めクイズ
+  // ===========================
+
+  // 正規表現用の特殊文字をエスケープする
+  function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // 単語がその例文（日本語訳付き）に単語境界付きで含まれているか確認する
+  function hasFillBlankExample(word) {
+    if (!word.examples || word.examples.length === 0) return false;
+    var regex = new RegExp('\\b' + escapeRegex(word.word) + '\\b', 'i');
+    return word.examples.some(function(ex) {
+      var eng = typeof ex === 'string' ? ex : (ex.english || '');
+      var jpn = typeof ex === 'string' ? '' : (ex.japanese || '');
+      return eng && jpn && regex.test(eng);
+    });
+  }
+
+  // 英文中の対象単語を ___ に置換した文字列を返す（見つからなければ null）
+  function buildFillBlankSentence(english, targetWord) {
+    var regex = new RegExp('\\b' + escapeRegex(targetWord) + '\\b', 'gi');
+    if (!regex.test(english)) return null;
+    regex.lastIndex = 0;
+    return english.replace(regex, '___');
+  }
+
+  // 文字数ヒントを生成する（例: "play" → "_ _ _ _"）
+  function buildLetterHint(word) {
+    return word.split('').map(function() { return '_'; }).join(' ');
+  }
+
+  // 穴埋めクイズ用の出題アイテムプールを作る
+  // 返値: { word, english, japanese, blanked } の配列
+  function buildFillBlankPool(wordPool) {
+    var items = [];
+    wordPool.forEach(function(word) {
+      if (!word.examples) return;
+      word.examples.forEach(function(ex) {
+        var eng = typeof ex === 'string' ? ex : (ex.english || '');
+        var jpn = typeof ex === 'string' ? '' : (ex.japanese || '');
+        if (!eng || !jpn) return;
+        var blanked = buildFillBlankSentence(eng, word.word);
+        if (!blanked) return; // 例文中に単語が見つからない場合はスキップ
+        items.push({ word: word, english: eng, japanese: jpn, blanked: blanked });
+      });
+    });
+    return items;
+  }
+
+  // 例文穴埋めクイズの次の問題を選んで表示する
+  function showNextFillBlankQuestion() {
+    var flatList = buildFlatPartList();
+    var fbWordPool = flatList.filter(function(w) { return hasFillBlankExample(w); });
+    if (fbWordPool.length === 0) {
+      renderQuizError('例文穴埋めクイズには、単語本体が含まれた例文（日本語訳付き）が必要です。');
+      return;
+    }
+
+    var filteredWordPool = buildQuizPool(fbWordPool, flatList);
+    if (filteredWordPool === null) return;
+
+    var allItems = buildFillBlankPool(filteredWordPool);
+    if (allItems.length === 0) {
+      renderQuizError('出題できる穴埋め例文がありません。');
+      return;
+    }
+
+    // 直近に出題した例文を除外（全て除外されたらリセット）
+    var freshItems = allItems.filter(function(item) {
+      var key = item.word.id + '|' + item.english;
+      return quizState.recentFillBlankKeys.indexOf(key) === -1;
+    });
+    if (freshItems.length === 0) {
+      quizState.recentFillBlankKeys = [];
+      freshItems = allItems;
+    }
+
+    var selected = selectWeightedSentenceItem(freshItems);
+    quizState.currentWord    = selected.word;
+    quizState.currentExample = { english: selected.english, japanese: selected.japanese };
+
+    var key = selected.word.id + '|' + selected.english;
+    quizState.recentFillBlankKeys.push(key);
+    if (quizState.recentFillBlankKeys.length > QUIZ_RECENT_MEMORY) {
+      quizState.recentFillBlankKeys.shift();
+    }
+
+    quizState.answered = false;
+    renderFillBlankQuestion(selected);
+  }
+
+  // 例文穴埋めクイズの問題UIを描画する
+  function renderFillBlankQuestion(item) {
+    var posLabel = partOfSpeechLabels[item.word.partOfSpeech] || item.word.partOfSpeech || '';
+    var hint = buildLetterHint(item.word.word);
+
+    var html = ''
+      + '<div class="fillblank-sentence">' + escapeHtml(item.blanked) + '</div>'
+      + '<div class="fillblank-japanese">' + escapeHtml(item.japanese) + '</div>'
+      + '<div class="fillblank-hint">'
+      +   '<span class="fillblank-hint-label">文字数ヒント:</span>'
+      +   '<span class="fillblank-hint-chars">' + escapeHtml(hint) + '</span>'
+      + '</div>'
+      + '<div class="spell-input-area">'
+      +   '<input type="text" class="spell-input" id="fillblankInput"'
+      +     ' placeholder="空欄の英単語を入力..." autocomplete="off" autocapitalize="none" spellcheck="false">'
+      +   '<button class="spell-submit-btn" id="fillblankSubmitBtn" onclick="handleFillBlankSubmit()">解答</button>'
+      + '</div>'
+      + '<div class="quiz-feedback" id="quizFeedback"></div>';
+
+    document.getElementById('quizMessage').textContent = '空欄に入る英単語を入力してください';
+    document.getElementById('quizContent').innerHTML = html;
+
+    document.getElementById('fillblankInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleFillBlankSubmit();
+    });
+    document.getElementById('fillblankInput').focus();
+  }
+
+  // 例文穴埋めクイズの解答を判定する
+  function handleFillBlankSubmit() {
+    if (quizState.answered) return;
+
+    var inputEl = document.getElementById('fillblankInput');
+    if (!inputEl) return;
+
+    var inputValue = inputEl.value.trim();
+    if (!inputValue) return;
+
+    var questionWord   = quizState.currentWord;
+    var currentExample = quizState.currentExample;
+    if (!questionWord || !currentExample) return;
+
+    // 大文字小文字を無視して完全一致で判定する
+    var isCorrect = inputValue.toLowerCase() === questionWord.word.toLowerCase();
+    quizState.answered = true;
+
+    inputEl.disabled = true;
+    var submitBtn = document.getElementById('fillblankSubmitBtn');
+    if (submitBtn) submitBtn.disabled = true;
+
+    recordQuizResult(questionWord.id, isCorrect);
+
+    var feedbackEl = document.getElementById('quizFeedback');
+    var contentEl  = document.getElementById('quizContent');
+    var posLabel   = partOfSpeechLabels[questionWord.partOfSpeech] || questionWord.partOfSpeech || '';
+
+    if (isCorrect) {
+      feedbackEl.textContent = '正解！';
+      feedbackEl.className = 'quiz-feedback correct';
+    } else {
+      feedbackEl.textContent = '不正解…';
+      feedbackEl.className = 'quiz-feedback wrong';
+
+      // 不正解時：正解の英単語・元の英文・日本語訳を表示する
+      var detailDiv = document.createElement('div');
+      detailDiv.className = 'spell-answer-detail';
+      detailDiv.innerHTML = ''
+        + '<div class="spell-answer-word">'
+        +   escapeHtml(questionWord.word)
+        +   (posLabel ? ' <span class="pos-badge">' + escapeHtml(posLabel) + '</span>' : '')
+        + '</div>'
+        + '<div style="margin-top:6px; font-size:0.9rem; color:#444;">'
+        +   escapeHtml(currentExample.english)
+        + '</div>'
+        + '<div style="margin-top:4px; font-size:0.85rem; color:#888;">'
+        +   escapeHtml(currentExample.japanese)
+        + '</div>';
+      contentEl.appendChild(detailDiv);
+    }
+
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'quiz-next-btn';
+    nextBtn.textContent = '次の問題へ';
+    nextBtn.onclick = showNextQuestion;
+
+    var endBtn = document.createElement('button');
+    endBtn.className = 'quiz-end-btn';
+    endBtn.textContent = 'クイズを終了する';
+    endBtn.onclick = stopQuiz;
+
+    contentEl.appendChild(nextBtn);
+    contentEl.appendChild(endBtn);
+  }
+
+  // ===========================
+  // 例文クイズ（4択）
+  // ===========================
+
+  // 例文プールから日本語訳の重複を除いたリストを返す
+  function getDistinctJapanese(items) {
+    var seen = {};
+    var result = [];
+    for (var i = 0; i < items.length; i++) {
+      var ja = items[i].japanese;
+      if (ja && !seen[ja]) {
+        seen[ja] = true;
+        result.push(ja);
+      }
+    }
+    return result;
+  }
+
+  // 正解以外の日本語訳をランダムにcount個選ぶ
+  function pickWrongJapanese(allItems, correctJapanese, count) {
+    var pool = [];
+    var seen = {};
+    seen[correctJapanese] = true;
+    for (var i = 0; i < allItems.length; i++) {
+      var ja = allItems[i].japanese;
+      if (ja && !seen[ja]) {
+        seen[ja] = true;
+        pool.push(ja);
+      }
+    }
+    shuffleArray(pool);
+    return pool.slice(0, count);
+  }
+
+  // 例文クイズの次の問題を表示する
+  function showNextExQuizQuestion() {
+    var flatList = buildFlatPartList();
+    var exWordPool = flatList.filter(function(w) { return hasSentence(w); });
+    if (exWordPool.length === 0) {
+      renderQuizError('例文クイズには、日本語訳が登録された例文が必要です。');
+      return;
+    }
+
+    var filteredWordPool = buildQuizPool(exWordPool, flatList);
+    if (filteredWordPool === null) return;
+
+    var allItems = buildSentencePool(filteredWordPool);
+    if (allItems.length === 0) {
+      renderQuizError('出題できる例文がありません。');
+      return;
+    }
+
+    var distinctJa = getDistinctJapanese(allItems);
+    if (distinctJa.length < 4) {
+      renderQuizError('例文クイズには、異なる日本語訳が4つ以上必要です。');
+      return;
+    }
+
+    // 直近に出題した例文を除外（ただし全て除外されたらリセット）
+    var recentKeys = quizState.recentExQuizKeys;
+    var candidates = allItems.filter(function(item) {
+      var key = item.word.id + '|' + item.english;
+      return recentKeys.indexOf(key) === -1;
+    });
+    if (candidates.length === 0) {
+      quizState.recentExQuizKeys = [];
+      candidates = allItems;
+    }
+
+    var item = selectWeightedSentenceItem(candidates);
+    var itemKey = item.word.id + '|' + item.english;
+    quizState.recentExQuizKeys.push(itemKey);
+    if (quizState.recentExQuizKeys.length > QUIZ_RECENT_MEMORY) {
+      quizState.recentExQuizKeys.shift();
+    }
+
+    quizState.currentWord = item.word;
+    quizState.currentExample = { english: item.english, japanese: item.japanese };
+    quizState.answered = false;
+
+    // 選択肢を作る：正解1つ＋不正解3つ
+    var wrongChoices = pickWrongJapanese(allItems, item.japanese, 3);
+    if (wrongChoices.length < 3) {
+      renderQuizError('選択肢を4つ用意できません。例文の日本語訳をもっと登録してください。');
+      return;
+    }
+    var choices = wrongChoices.concat([item.japanese]);
+    shuffleArray(choices);
+
+    renderExQuizQuestion(item, choices);
+  }
+
+  // 例文クイズの問題UIを描画する
+  function renderExQuizQuestion(item, choices) {
+    var posLabel = partOfSpeechLabels[item.word.partOfSpeech] || item.word.partOfSpeech || '';
+    var choiceButtons = choices.map(function(ja) {
+      return '<button class="quiz-choice-btn" data-value="' + escapeForAttr(ja) + '" onclick="handleExQuizChoiceClick(this)">'
+        + escapeHtml(ja) + '</button>';
+    }).join('');
+
+    var html = ''
+      + '<div class="quiz-question-sentence">' + escapeHtml(item.english) + '</div>'
+      + '<div class="quiz-question-source">出典: <strong>' + escapeHtml(item.word.word) + '</strong>'
+      + (posLabel ? ' <span class="pos-badge">' + escapeHtml(posLabel) + '</span>' : '') + '</div>'
+      + '<div class="quiz-choices">' + choiceButtons + '</div>'
+      + '<div class="quiz-feedback" id="quizFeedback"></div>';
+
+    document.getElementById('quizMessage').textContent = '次の英文の日本語訳はどれですか？';
+    document.getElementById('quizContent').innerHTML = html;
+  }
+
+  // 例文クイズの選択肢ボタンがクリックされたときの処理
+  function handleExQuizChoiceClick(clickedBtn) {
+    if (quizState.answered) return;
+    quizState.answered = true;
+
+    var selected = clickedBtn.getAttribute('data-value');
+    var correct = quizState.currentExample.japanese;
+    var isCorrect = (selected === correct);
+
+    recordQuizResult(quizState.currentWord.id, isCorrect);
+
+    // ボタンに正解・不正解の色を付ける
+    var allBtns = document.querySelectorAll('.quiz-choice-btn');
+    for (var i = 0; i < allBtns.length; i++) {
+      var btn = allBtns[i];
+      btn.disabled = true;
+      if (btn.getAttribute('data-value') === correct) {
+        btn.classList.add('correct');
+      } else if (btn === clickedBtn && !isCorrect) {
+        btn.classList.add('wrong');
+      }
+    }
+
+    var feedbackEl = document.getElementById('quizFeedback');
+    if (isCorrect) {
+      feedbackEl.textContent = '正解！';
+      feedbackEl.style.color = '#27ae60';
+    } else {
+      feedbackEl.textContent = '不正解。正解: ' + correct;
+      feedbackEl.style.color = '#e74c3c';
+    }
+
+    // 「次の問題へ」「クイズを終了する」ボタンを追加する
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'quiz-next-btn';
+    nextBtn.textContent = '次の問題へ';
+    nextBtn.onclick = showNextQuestion;
+
+    var endBtn = document.createElement('button');
+    endBtn.className = 'quiz-end-btn';
+    endBtn.textContent = 'クイズを終了する';
+    endBtn.onclick = stopQuiz;
+
+    var contentEl = document.getElementById('quizContent');
+    contentEl.appendChild(nextBtn);
+    contentEl.appendChild(endBtn);
+  }
+
+  // クイズエラーメッセージを表示する（出題中のエラー）
+  function renderQuizError(message) {
+    document.getElementById('quizMessage').textContent = '';
+    // モード選択エリアを再表示してエラーを見せる
+    document.getElementById('quizModeArea').style.display = 'block';
+    renderQuizModeSelector();
+    showModeError(message);
+    document.getElementById('quizContent').innerHTML = '';
+  }
+
+  // onclick属性に埋め込む文字列のシングルクォートをエスケープする
+  function escapeForAttr(str) {
+    if (!str) return '';
+    return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  }
+
+  // ===========================
+  // アプリの初期化
+  // ===========================
+
+  // ページ読み込み時にlocalStorageからデータを読み込み、一覧を表示する
+  loadWords();
+  renderWordList();
+</script>
+
+<!-- コピー完了トースト -->
+<div class="copy-toast" id="copyToast"></div>
+
+</body>
+</html>
