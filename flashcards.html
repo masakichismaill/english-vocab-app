@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>フラッシュカード - 英単語帳</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="fc-page">
+
+<header>
+  <h1>フラッシュカード</h1>
+  <p>カードをめくって単語を復習しよう</p>
+</header>
+
+<div class="container fc-page-container">
+
+  <a href="index.html" class="back-to-vocab-btn">← 単語帳に戻る</a>
+
+  <!-- 絞り込み・設定セクション -->
+  <div class="fc-filter-section">
+
+    <!-- メインフィルター -->
+    <div class="fc-filter-row">
+      <button class="fc-filter-btn active" data-filter="all"    onclick="fcSetFilter('all', this)">すべて</button>
+      <button class="fc-filter-btn"        data-filter="favorite" onclick="fcSetFilter('favorite', this)">★ お気に入り</button>
+      <button class="fc-filter-btn"        data-filter="weak"   onclick="fcSetFilter('weak', this)">！ 苦手</button>
+    </div>
+
+    <!-- 品詞フィルター（JSで生成） -->
+    <div class="fc-filter-pos-row" id="fcFilterPosRow"></div>
+
+    <!-- ランダム切り替え＆件数 -->
+    <div class="fc-random-row">
+      <label class="toggle-switch">
+        <input type="checkbox" id="fcRandomToggle" onchange="fcToggleRandom()">
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="toggle-label">ランダム表示</span>
+      <span class="fc-card-count" id="fcCardCount"></span>
+    </div>
+
+    <!-- モード切替（手動 / 自動） -->
+    <div class="fc-mode-row">
+      <button class="fc-mode-btn active" id="fcModeBtnManual" onclick="fcSetMode('manual')">手動モード</button>
+      <button class="fc-mode-btn"        id="fcModeBtnAuto"   onclick="fcSetMode('auto')">自動モード</button>
+    </div>
+
+  </div>
+
+  <!-- フラッシュカードエリア -->
+  <div class="fc-area">
+
+    <!-- 登録なし・フィルター空メッセージ -->
+    <div class="fc-empty" id="fcEmpty" style="display:none">
+      <p>表示できるカードがありません。</p>
+      <p>単語を登録するか、絞り込み条件を変更してください。</p>
+    </div>
+
+    <!-- カード本体 -->
+    <div class="fc-card-wrapper" id="fcCardWrapper">
+      <div class="fc-card" id="fcCard" onclick="fcFlip()">
+        <div class="fc-card-inner" id="fcCardInner">
+
+          <!-- 表面：英単語 -->
+          <div class="fc-card-front">
+            <div class="fc-card-front-content">
+              <span class="fc-word" id="fcWord"></span>
+            </div>
+            <div class="fc-flip-hint">タップして裏返す</div>
+          </div>
+
+          <!-- 裏面：品詞・意味・例文 -->
+          <div class="fc-card-back">
+            <div class="fc-card-back-content">
+              <div class="fc-back-pos"      id="fcBackPos"></div>
+              <ul  class="fc-back-meanings" id="fcBackMeanings"></ul>
+              <div class="fc-back-examples" id="fcBackExamples"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 自動モード：ステップインジケーター -->
+    <div class="fc-auto-step-indicator" id="fcAutoStepIndicator" style="display:none">
+      <span class="fc-step-item" id="fcStepItem0">英単語</span>
+      <span class="fc-step-sep">→</span>
+      <span class="fc-step-item" id="fcStepItem1">意味</span>
+      <span class="fc-step-sep">→</span>
+      <span class="fc-step-item" id="fcStepItem2">例文</span>
+    </div>
+
+    <!-- 自動モード：再生コントロール -->
+    <div class="fc-auto-controls" id="fcAutoControls" style="display:none">
+      <button class="fc-auto-btn fc-auto-start-btn"  id="fcAutoStartBtn"  onclick="fcAutoStart()">▶ 開始</button>
+      <button class="fc-auto-btn fc-auto-pause-btn"  id="fcAutoPauseBtn"  onclick="fcAutoPause()"  style="display:none">⏸ 一時停止</button>
+      <button class="fc-auto-btn fc-auto-resume-btn" id="fcAutoResumeBtn" onclick="fcAutoResume()" style="display:none">▶ 再開</button>
+    </div>
+
+    <!-- 表/裏 切り替えボタン -->
+    <div class="fc-face-btns" id="fcFaceBtns">
+      <button class="fc-face-btn" onclick="fcShowFront()">表を見る</button>
+      <button class="fc-face-btn" onclick="fcShowBack()">裏を見る</button>
+    </div>
+
+    <!-- ナビゲーション（前へ・進捗・次へ） -->
+    <div class="fc-nav" id="fcNav">
+      <button class="fc-nav-btn" id="fcPrevBtn" onclick="fcPrev()">← 前へ</button>
+      <span   class="fc-progress" id="fcProgress"></span>
+      <button class="fc-nav-btn" id="fcNextBtn" onclick="fcNext()">次へ →</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+<script src="flashcards.js"></script>
+
+</body>
+</html>

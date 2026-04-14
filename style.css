@@ -1716,3 +1716,538 @@ header p {
     padding: 4px 10px;
   }
 }
+
+/* ===========================
+   フラッシュカードページ
+=========================== */
+
+/* フラッシュカードへ遷移ボタン（index.html） */
+.go-flashcard-btn {
+  background: #7c5cbf;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+  margin-left: 10px;
+  transition: background 0.2s;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.go-flashcard-btn:hover {
+  background: #6a4caa;
+}
+
+/* フラッシュカードページのコンテナ */
+.fc-page-container {
+  max-width: 680px;
+}
+
+/* 絞り込み・設定パネル */
+.fc-filter-section {
+  background: white;
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.09);
+}
+
+/* メインフィルター行（すべて・お気に入り・苦手） */
+.fc-filter-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fc-filter-btn {
+  background: #f0f4f8;
+  color: #666;
+  border: 1.5px solid #ddd;
+  padding: 6px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.83rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.fc-filter-btn.active {
+  background: #2d7dd2;
+  color: white;
+  border-color: #2d7dd2;
+}
+
+.fc-filter-btn:hover:not(.active) {
+  background: #e5edf7;
+  border-color: #c5d5e8;
+}
+
+/* 品詞フィルター行 */
+.fc-filter-pos-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.fc-pos-filter-btn {
+  background: #f5f0ff;
+  color: #7c5cbf;
+  border: 1.5px solid #d5c8f0;
+  padding: 4px 13px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.fc-pos-filter-btn.active {
+  background: #7c5cbf;
+  color: white;
+  border-color: #7c5cbf;
+}
+
+.fc-pos-filter-btn:hover:not(.active) {
+  background: #ece4ff;
+  border-color: #b9a5e0;
+}
+
+/* ランダムトグル行 */
+.fc-random-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.fc-card-count {
+  margin-left: auto;
+  font-size: 0.82rem;
+  color: #999;
+}
+
+/* ===========================
+   フラッシュカードエリア
+=========================== */
+
+.fc-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+/* 空メッセージ */
+.fc-empty {
+  background: white;
+  border-radius: 14px;
+  padding: 52px 24px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.09);
+  width: 100%;
+  color: #888;
+  font-size: 0.95rem;
+  line-height: 2;
+}
+
+/* カードラッパー（中央寄せ） */
+.fc-card-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* フラッシュカード本体（3D パースペクティブコンテナ） */
+.fc-card {
+  width: 100%;
+  max-width: 560px;
+  height: 340px;
+  perspective: 1200px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* カード内側（回転する要素） */
+.fc-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.fc-card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+/* 表面・裏面 共通 */
+.fc-card-front,
+.fc-card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 表面 */
+.fc-card-front {
+  background: white;
+  border-top: 6px solid #2d7dd2;
+}
+
+.fc-card-front-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  padding: 24px 28px 0;
+}
+
+/* カード表面の英単語 */
+.fc-word {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: 0.02em;
+  text-align: center;
+  word-break: break-word;
+  line-height: 1.2;
+}
+
+/* カード表面のヒント文 */
+.fc-flip-hint {
+  font-size: 0.72rem;
+  color: #c8c8c8;
+  padding: 12px 0 18px;
+  letter-spacing: 0.06em;
+}
+
+/* 裏面 */
+.fc-card-back {
+  background: #f7f4ff;
+  border-top: 6px solid #7c5cbf;
+  transform: rotateY(180deg);
+  justify-content: flex-start;
+  padding: 22px 28px;
+  overflow-y: auto;
+}
+
+.fc-card-back-content {
+  width: 100%;
+}
+
+/* 裏面：品詞バッジ */
+.fc-back-pos {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #7c5cbf;
+  background: #ede8ff;
+  padding: 3px 13px;
+  border-radius: 12px;
+  margin-bottom: 13px;
+  letter-spacing: 0.03em;
+}
+
+/* 裏面：意味リスト */
+.fc-back-meanings {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+}
+
+.fc-back-meanings li {
+  font-size: 1.0rem;
+  color: #333;
+  padding: 3px 0;
+  line-height: 1.55;
+}
+
+.fc-back-meanings li::before {
+  content: '・';
+  color: #7c5cbf;
+}
+
+/* 裏面：例文リスト */
+.fc-back-examples {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fc-back-example-item {
+  padding: 8px 12px;
+  border-left: 3px solid #c4b0f0;
+  background: white;
+  border-radius: 0 6px 6px 0;
+}
+
+.fc-back-example-en {
+  font-size: 0.88rem;
+  color: #555;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+.fc-back-example-ja {
+  font-size: 0.82rem;
+  color: #888;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+/* ===========================
+   表/裏ボタン・ナビゲーション
+=========================== */
+
+/* 表を見る / 裏を見る ボタン */
+.fc-face-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.fc-face-btn {
+  background: white;
+  color: #555;
+  border: 1.5px solid #ddd;
+  padding: 8px 22px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  transition: all 0.2s;
+}
+
+.fc-face-btn:hover {
+  background: #f0f0f0;
+  border-color: #bbb;
+}
+
+/* 前へ / 次へ ナビゲーション */
+.fc-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  width: 100%;
+  max-width: 560px;
+}
+
+.fc-nav-btn {
+  background: white;
+  color: #2d7dd2;
+  border: 1.5px solid #c5d5e8;
+  padding: 10px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.fc-nav-btn:hover:not(:disabled) {
+  background: #eaf1fb;
+  border-color: #2d7dd2;
+}
+
+.fc-nav-btn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.fc-progress {
+  font-size: 0.9rem;
+  color: #888;
+  min-width: 64px;
+  text-align: center;
+}
+
+/* ===========================
+   レスポンシブ（フラッシュカード）
+=========================== */
+@media (max-width: 520px) {
+  .fc-card {
+    height: 280px;
+  }
+
+  .fc-word {
+    font-size: 2.1rem;
+  }
+
+  .fc-card-back {
+    padding: 16px 18px;
+  }
+
+  .fc-back-meanings li {
+    font-size: 0.95rem;
+  }
+
+  .fc-nav-btn {
+    padding: 9px 16px;
+    font-size: 0.88rem;
+  }
+
+  .go-flashcard-btn {
+    margin-left: 0;
+    margin-top: 0;
+  }
+}
+
+/* ===========================
+   フラッシュカード自動モード
+=========================== */
+
+/* モード切替行 */
+.fc-mode-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.fc-mode-btn {
+  background: #f0f4f8;
+  color: #666;
+  border: 1.5px solid #ddd;
+  padding: 7px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.fc-mode-btn.active {
+  background: #2d7dd2;
+  color: white;
+  border-color: #2d7dd2;
+}
+
+.fc-mode-btn:hover:not(.active) {
+  background: #e5edf7;
+  border-color: #c5d5e8;
+}
+
+/* ステップインジケーター */
+.fc-auto-step-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.fc-step-item {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #ccc;
+  transition: color 0.3s;
+  letter-spacing: 0.03em;
+}
+
+.fc-step-item::before {
+  content: '●';
+  font-size: 0.5rem;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.fc-step-item.active  { color: #7c5cbf; }
+.fc-step-item.done    { color: #3ab5a0; }
+.fc-step-item.pending { color: #ccc; }
+.fc-step-item.skip    { color: #e8e8e8; }
+
+.fc-step-sep {
+  color: #ddd;
+  font-size: 0.78rem;
+}
+
+/* 自動モード：再生コントロール */
+.fc-auto-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.fc-auto-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 30px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.fc-auto-btn:active {
+  transform: scale(0.97);
+}
+
+.fc-auto-start-btn {
+  background: #7c5cbf;
+  color: white;
+}
+.fc-auto-start-btn:hover { background: #6a4caa; }
+
+.fc-auto-pause-btn {
+  background: #f0f4f8;
+  color: #555;
+  border: 1.5px solid #ddd;
+}
+.fc-auto-pause-btn:hover { background: #e0e0e0; }
+
+.fc-auto-resume-btn {
+  background: #3ab5a0;
+  color: white;
+}
+.fc-auto-resume-btn:hover { background: #2e9e8c; }
+
+/* 例文の段階表示（自動モード step 1 で例文を一時的に隠す） */
+.fc-card-back .fc-back-examples {
+  transition: opacity 0.4s ease;
+}
+
+.fc-card-back.hide-examples .fc-back-examples {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ===========================
+   レスポンシブ（自動モード）
+=========================== */
+@media (max-width: 520px) {
+  .fc-auto-btn {
+    padding: 10px 20px;
+    font-size: 0.88rem;
+  }
+
+  .fc-step-item {
+    font-size: 0.75rem;
+  }
+}
