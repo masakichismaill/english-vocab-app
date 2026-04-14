@@ -1393,12 +1393,10 @@ function confirmImport() {
 
   var msg;
   if (mode === 'replace') {
-    msg = '置き換え完了: ' + result.added + ' 件のデータを読み込みました。';
+    msg = '置き換え完了: ' + result.added + ' 件を読み込みました。';
   } else {
-    msg = '追加完了: ' + result.added + ' 件を追加しました。';
-    if (result.skipped > 0) {
-      msg += '（' + result.skipped + ' 件は重複のためスキップ）';
-    }
+    var total = result.added + result.skipped;
+    msg = '追加: ' + result.added + ' 件\n重複スキップ: ' + result.skipped + ' 件\n合計: ' + total + ' 件';
   }
   showImportResult(msg, 'success');
 }
