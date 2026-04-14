@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>クイズ - 英単語帳</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="quiz-page">
+
+<header>
+  <h1>英単語クイズ</h1>
+  <p>単語力を試そう</p>
+</header>
+
+<div class="container quiz-page-container">
+
+  <a href="index.html" class="back-to-vocab-btn">← 単語帳に戻る</a>
+
+  <!-- クイズエリア -->
+  <div class="quiz-section" id="quizSection">
+    <h2 id="quizTitle">クイズ</h2>
+    <!-- モード選択エリア（クイズ開始前に表示） -->
+    <div id="quizModeArea"></div>
+    <!-- クイズ本体エリア（出題中に表示） -->
+    <div class="quiz-message" id="quizMessage"></div>
+    <div id="quizContent"></div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+<script src="quiz.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(head -n 1247 /Users/okeyajoumare/Projects/applications/english-vocab-app/script.js)",
+      "Bash(mv /tmp/script_trimmed.js /Users/okeyajoumare/Projects/applications/english-vocab-app/script.js)"
+    ]
+  }
+}

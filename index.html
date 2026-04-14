@@ -15,23 +15,11 @@
 
 <div class="container">
 
-  <!-- ボタン行：単語追加 & クイズ開始 -->
+  <!-- ボタン行：単語追加 & クイズへ -->
   <button class="open-form-btn" id="openFormBtn" onclick="handleFormToggle()">
     ＋ 単語を追加する
   </button>
-  <button class="open-quiz-btn" id="openQuizBtn" onclick="handleQuizToggle()">
-    クイズを始める
-  </button>
-
-  <!-- クイズセクション -->
-  <div class="quiz-section" id="quizSection" style="display: none;">
-    <h2 id="quizTitle">クイズ</h2>
-    <!-- モード選択エリア（クイズ開始前に表示） -->
-    <div id="quizModeArea"></div>
-    <!-- クイズ本体エリア（出題中に表示） -->
-    <div class="quiz-message" id="quizMessage"></div>
-    <div id="quizContent"></div>
-  </div>
+  <a href="quiz.html" class="go-quiz-btn">クイズを始める →</a>
 
   <!-- 登録・編集フォーム -->
   <div class="form-section" id="formSection" style="display: none;">
@@ -140,6 +128,20 @@
     <div class="word-count-text" id="wordCountText"></div>
   </div>
 
+  <!-- データ管理セクション -->
+  <div class="data-manage-section">
+    <div class="data-manage-header">データ管理</div>
+    <div class="data-manage-buttons">
+      <button class="btn-export" onclick="exportToJson()">↓ JSONを書き出す</button>
+      <label class="btn-import">
+        ↑ JSONを読み込む
+        <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImportFileSelect(event)">
+      </label>
+    </div>
+    <p class="data-manage-note">※ インポート時、画像データは復元されません。単語テキストのみ移行できます。</p>
+    <div class="data-manage-result" id="dataManageResult" style="display:none"></div>
+  </div>
+
   <!-- 単語カード一覧 -->
   <div class="word-card-list" id="wordCardList"></div>
 
@@ -153,6 +155,38 @@
     <div class="modal-buttons">
       <button class="btn-modal-cancel" onclick="closeDeleteModal()">キャンセル</button>
       <button class="btn-modal-delete" onclick="confirmDelete()">削除する</button>
+    </div>
+  </div>
+</div>
+
+<!-- インポート確認モーダル -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal-box import-modal-box">
+    <h3>JSONを読み込む</h3>
+    <p id="importFileInfo" class="import-file-info"></p>
+
+    <div class="import-mode-group">
+      <label class="import-mode-option">
+        <input type="radio" name="importMode" value="merge" checked onchange="updateImportWarning()">
+        <div class="import-mode-text">
+          <span class="import-mode-name">追加</span>
+          <span class="import-mode-desc">既存のデータに追加します。同じ単語・同じ品詞の組は重複としてスキップします。</span>
+        </div>
+      </label>
+      <label class="import-mode-option">
+        <input type="radio" name="importMode" value="replace" onchange="updateImportWarning()">
+        <div class="import-mode-text">
+          <span class="import-mode-name">置き換え</span>
+          <span class="import-mode-desc">現在のデータをすべて削除して、読み込んだデータに置き換えます。</span>
+        </div>
+      </label>
+    </div>
+
+    <p class="import-warning" id="importWarning" style="display:none"></p>
+
+    <div class="modal-buttons">
+      <button class="btn-modal-cancel" onclick="closeImportModal()">キャンセル</button>
+      <button class="btn-modal-confirm" onclick="confirmImport()">読み込む</button>
     </div>
   </div>
 </div>
