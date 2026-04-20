@@ -5,8 +5,41 @@
 // localStorageに保存するキー
 var STORAGE_KEY = 'englishVocabApp_v1';
 
+// 独立例文データのlocalStorageキー（単語データとは別管理）
+var SENTENCES_KEY = 'englishVocabApp_sentences_v1';
+
 // メモリ上の単語リスト
 var wordList = [];
+
+// メモリ上の独立例文リスト
+var sentenceList = [];
+
+// 独立例文データをlocalStorageから読み込む（旧データには category/workTitle を補完する）
+function loadSentences() {
+  var stored = localStorage.getItem(SENTENCES_KEY);
+  if (stored) {
+    try {
+      var parsed = JSON.parse(stored);
+      sentenceList = Array.isArray(parsed) ? parsed : [];
+      // category / workTitle が未設定の既存データにデフォルト値を補完する
+      var needsSave = false;
+      sentenceList.forEach(function(s) {
+        if (!s.category) { s.category = 'other'; needsSave = true; }
+        if (!s.workTitle) { s.workTitle = '未分類'; needsSave = true; }
+      });
+      if (needsSave) saveSentences();
+    } catch (e) {
+      sentenceList = [];
+    }
+  } else {
+    sentenceList = [];
+  }
+}
+
+// 独立例文データをlocalStorageに保存する
+function saveSentences() {
+  localStorage.setItem(SENTENCES_KEY, JSON.stringify(sentenceList));
+}
 
 // 編集中の単語のID（新規追加の場合はnull）
 var editingWordId = null;
@@ -1482,6 +1515,7 @@ function showImportResult(message, type) {
 // ===========================
 
 loadWords();
+loadSentences();
 if (document.getElementById('wordCardList')) {
   renderWordList();
 }

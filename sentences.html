@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>例文管理 - 英単語帳</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>例文管理</h1>
+  <p>作品ごとの例文データベース</p>
+</header>
+
+<div class="container sentences-page-container">
+
+  <a href="index.html" class="back-to-vocab-btn">← 単語帳に戻る</a>
+
+  <!-- 新しい作品を開くボタン -->
+  <button class="open-form-btn open-sentence-form-btn" id="openNewWorkBtn" onclick="handleNewWorkFormToggle()">
+    ＋ 新しい作品を開く
+  </button>
+
+  <!-- 新しい作品フォーム -->
+  <div class="form-section" id="newWorkFormSection" style="display: none;">
+    <h2>作品を指定する</h2>
+
+    <div class="form-group">
+      <label for="newWorkCategory">カテゴリー<span class="required-mark">*</span></label>
+      <select id="newWorkCategory">
+        <option value="movie">映画</option>
+        <option value="song">洋楽</option>
+        <option value="book">本</option>
+        <option value="tv">ドラマ・TV</option>
+        <option value="game">ゲーム</option>
+        <option value="other">その他</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="newWorkTitle">作品名<span class="required-mark">*</span></label>
+      <input type="text" id="newWorkTitle" placeholder="例: Harry Potter">
+      <div class="error-msg" id="newWorkTitleError"></div>
+    </div>
+
+    <div class="form-buttons">
+      <button class="btn-primary" onclick="navigateToWork()">この作品を開く</button>
+      <button class="btn-cancel" onclick="cancelNewWorkForm()">キャンセル</button>
+    </div>
+  </div>
+
+  <!-- 件数表示 -->
+  <div class="word-count-text" id="workCountText"></div>
+
+  <!-- 作品グループ一覧 -->
+  <div id="workGroupList"></div>
+
+</div>
+
+<script src="script.js"></script>
+<script src="sentences.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>作品ページ - 例文管理</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1 id="pageWorkTitle">作品ページ</h1>
+  <p id="pageWorkCategory">例文データベース</p>
+</header>
+
+<div class="container sentences-page-container">
+
+  <a href="sentences.html" class="back-to-vocab-btn">← 作品一覧に戻る</a>
+
+  <!-- 例文追加ボタン -->
+  <button class="open-form-btn open-sentence-form-btn" id="openSentenceFormBtn" onclick="handleSentenceFormToggle()">
+    ＋ 例文を追加する
+  </button>
+
+  <!-- 例文追加・編集フォーム -->
+  <div class="form-section" id="sentenceFormSection" style="display: none;">
+    <h2 id="sentenceFormTitle">新しい例文を追加</h2>
+
+    <div class="form-group">
+      <label for="inputSentenceEnglish">英文<span class="required-mark">*</span></label>
+      <input type="text" id="inputSentenceEnglish" placeholder="例: I run every morning.">
+      <div class="error-msg" id="sentenceEnglishError"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="inputSentenceJapanese">日本語訳<span class="required-mark">*</span></label>
+      <input type="text" id="inputSentenceJapanese" placeholder="例: 私は毎朝走ります。">
+      <div class="error-msg" id="sentenceJapaneseError"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="inputSentenceRelatedWords">関連単語（カンマ区切り）</label>
+      <input type="text" id="inputSentenceRelatedWords" placeholder="例: run, morning">
+    </div>
+
+    <div class="form-buttons">
+      <button class="btn-primary" onclick="saveSentence()">保存する</button>
+      <button class="btn-cancel" onclick="cancelSentenceForm()">キャンセル</button>
+    </div>
+  </div>
+
+  <!-- 検索・件数 -->
+  <div class="controls-section">
+    <div class="search-sort-row">
+      <input
+        type="text"
+        class="search-input"
+        id="sentenceSearchInput"
+        placeholder="英文・日本語・関連単語で検索..."
+        oninput="renderSentenceList()"
+      >
+    </div>
+    <div class="word-count-text" id="sentenceCountText"></div>
+  </div>
+
+  <!-- 例文カード一覧 -->
+  <div class="word-card-list" id="sentenceCardList"></div>
+
+</div>
+
+<!-- 削除確認モーダル -->
+<div class="modal-overlay" id="sentenceDeleteModal">
+  <div class="modal-box">
+    <h3>例文を削除しますか？</h3>
+    <p id="sentenceDeleteModalText">この操作は取り消せません。</p>
+    <div class="modal-buttons">
+      <button class="btn-modal-cancel" onclick="closeSentenceDeleteModal()">キャンセル</button>
+      <button class="btn-modal-delete" onclick="confirmSentenceDelete()">削除する</button>
+    </div>
+  </div>
+</div>
+
+<!-- コピー完了トースト -->
+<div class="copy-toast" id="copyToast"></div>
+
+<script src="script.js"></script>
+<script src="sentence-work.js"></script>
+
+</body>
+</html>

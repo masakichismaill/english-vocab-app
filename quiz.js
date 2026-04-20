@@ -148,19 +148,25 @@ function startQuizWithMode() {
     var pool = buildQuizPool(sentenceWordPool, flatList);
     if (pool === null) return;
   } else if (quizType === 'exquiz') {
-    // 例文クイズ：日本語訳付き例文を持つ品詞が対象
-    var exWordPool = flatList.filter(function(w) { return hasSentence(w); });
-    if (exWordPool.length === 0) {
-      showModeError('例文クイズには、日本語訳が登録された例文が必要です。\n例文登録時に日本語訳も入力してください。');
-      return;
-    }
-    var exPool = buildQuizPool(exWordPool, flatList);
-    if (exPool === null) return;
-    var exItems = buildSentencePool(exPool);
-    var distinctJa = getDistinctJapanese(exItems);
-    if (distinctJa.length < 4) {
-      showModeError('例文クイズには、異なる日本語訳が4つ以上必要です。（現在 ' + distinctJa.length + ' 種）');
-      return;
+    // 独立例文データベースを優先して確認する（4種以上なら即開始可能）
+    var distinctStandalone = getDistinctJapanese(sentenceList);
+    if (distinctStandalone.length >= 4) {
+      // 独立例文データベースで出題可能 → そのまま開始
+    } else {
+      // 独立例文が不足しているため単語に紐づく例文にフォールバック
+      var exWordPool = flatList.filter(function(w) { return hasSentence(w); });
+      if (exWordPool.length === 0) {
+        showModeError('例文クイズには、日本語訳が登録された例文が必要です。\n「例文管理」ページから例文を登録するか、単語の例文に日本語訳を追加してください。');
+        return;
+      }
+      var exPool = buildQuizPool(exWordPool, flatList);
+      if (exPool === null) return;
+      var exItems = buildSentencePool(exPool);
+      var distinctJa = getDistinctJapanese(exItems);
+      if (distinctJa.length < 4) {
+        showModeError('例文クイズには、異なる日本語訳が4つ以上必要です。（現在 ' + distinctJa.length + ' 種）\n「例文管理」ページから例文を追加してください。');
+        return;
+      }
     }
   } else if (quizType === 'fillblank') {
     // 例文穴埋めクイズ：その単語が含まれた日本語訳付き例文を持つ品詞が対象
@@ -1034,12 +1040,57 @@ function pickWrongJapanese(allItems, correctJapanese, count) {
   return pool.slice(0, count);
 }
 
-// 例文クイズの次の問題を表示する
+// 独立例文データベースから出題アイテム配列を作る
+function buildStandaloneSentenceItems() {
+  return sentenceList.map(function(s) {
+    return { id: s.id, english: s.english, japanese: s.japanese };
+  });
+}
+
+// 例文クイズの次の問題を表示する（独立例文DBを優先、なければ単語に紐づく例文を使用）
 function showNextExQuizQuestion() {
+  // ── 独立例文データベース優先パス ──
+  var standaloneItems = buildStandaloneSentenceItems();
+  var distinctStandalone = getDistinctJapanese(standaloneItems);
+
+  if (distinctStandalone.length >= 4) {
+    // 直近に出題した例文を除外（除外しきったらリセット）
+    var recentKeys = quizState.recentExQuizKeys;
+    var candidates = standaloneItems.filter(function(item) {
+      return recentKeys.indexOf(item.id) === -1;
+    });
+    if (candidates.length === 0) {
+      quizState.recentExQuizKeys = [];
+      candidates = standaloneItems;
+    }
+
+    // ランダムで1問選ぶ
+    var item = candidates[Math.floor(Math.random() * candidates.length)];
+    quizState.recentExQuizKeys.push(item.id);
+    if (quizState.recentExQuizKeys.length > QUIZ_RECENT_MEMORY) {
+      quizState.recentExQuizKeys.shift();
+    }
+
+    quizState.currentWord = null; // 独立例文には対応する単語なし
+    quizState.currentExample = { english: item.english, japanese: item.japanese };
+    quizState.answered = false;
+
+    // 選択肢：正解1つ＋不正解3つ
+    var wrongChoices = pickWrongJapanese(standaloneItems, item.japanese, 3);
+    if (wrongChoices.length < 3) {
+      renderQuizError('選択肢を4つ用意できません。例文の日本語訳をもっと登録してください。');
+      return;
+    }
+    var choices = shuffleArray(wrongChoices.concat([item.japanese]));
+    renderExQuizQuestion({ english: item.english, japanese: item.japanese, word: null }, choices);
+    return;
+  }
+
+  // ── 単語に紐づく例文へのフォールバック ──
   var flatList = buildFlatPartList();
   var exWordPool = flatList.filter(function(w) { return hasSentence(w); });
   if (exWordPool.length === 0) {
-    renderQuizError('例文クイズには、日本語訳が登録された例文が必要です。');
+    renderQuizError('例文クイズには、日本語訳が登録された例文が必要です。\n「例文管理」ページから例文を登録してください。');
     return;
   }
 
@@ -1058,43 +1109,49 @@ function showNextExQuizQuestion() {
     return;
   }
 
-  // 直近に出題した例文を除外（ただし全て除外されたらリセット）
-  var recentKeys = quizState.recentExQuizKeys;
-  var candidates = allItems.filter(function(item) {
+  // 直近に出題した例文を除外（全て除外されたらリセット）
+  var recentKeys2 = quizState.recentExQuizKeys;
+  var candidates2 = allItems.filter(function(item) {
     var key = item.word.id + '|' + item.english;
-    return recentKeys.indexOf(key) === -1;
+    return recentKeys2.indexOf(key) === -1;
   });
-  if (candidates.length === 0) {
+  if (candidates2.length === 0) {
     quizState.recentExQuizKeys = [];
-    candidates = allItems;
+    candidates2 = allItems;
   }
 
-  var item = selectWeightedSentenceItem(candidates);
-  var itemKey = item.word.id + '|' + item.english;
-  quizState.recentExQuizKeys.push(itemKey);
+  var item2 = selectWeightedSentenceItem(candidates2);
+  var itemKey2 = item2.word.id + '|' + item2.english;
+  quizState.recentExQuizKeys.push(itemKey2);
   if (quizState.recentExQuizKeys.length > QUIZ_RECENT_MEMORY) {
     quizState.recentExQuizKeys.shift();
   }
 
-  quizState.currentWord = item.word;
-  quizState.currentExample = { english: item.english, japanese: item.japanese };
+  quizState.currentWord = item2.word;
+  quizState.currentExample = { english: item2.english, japanese: item2.japanese };
   quizState.answered = false;
 
-  // 選択肢を作る：正解1つ＋不正解3つ
-  var wrongChoices = pickWrongJapanese(allItems, item.japanese, 3);
-  if (wrongChoices.length < 3) {
+  var wrongChoices2 = pickWrongJapanese(allItems, item2.japanese, 3);
+  if (wrongChoices2.length < 3) {
     renderQuizError('選択肢を4つ用意できません。例文の日本語訳をもっと登録してください。');
     return;
   }
-  var choices = wrongChoices.concat([item.japanese]);
-  shuffleArray(choices);
+  var choices2 = wrongChoices2.concat([item2.japanese]);
+  shuffleArray(choices2);
 
-  renderExQuizQuestion(item, choices);
+  renderExQuizQuestion(item2, choices2);
 }
 
-// 例文クイズの問題UIを描画する
+// 例文クイズの問題UIを描画する（item.word が null の場合は出典行を省略する）
 function renderExQuizQuestion(item, choices) {
-  var posLabel = partOfSpeechLabels[item.word.partOfSpeech] || item.word.partOfSpeech || '';
+  // 単語リンク例文の場合のみ出典を表示する
+  var sourceHtml = '';
+  if (item.word) {
+    var posLabel = partOfSpeechLabels[item.word.partOfSpeech] || item.word.partOfSpeech || '';
+    sourceHtml = '<div class="quiz-question-source">出典: <strong>' + escapeHtml(item.word.word) + '</strong>'
+      + (posLabel ? ' <span class="pos-badge">' + escapeHtml(posLabel) + '</span>' : '') + '</div>';
+  }
+
   var choiceButtons = choices.map(function(ja) {
     return '<button class="quiz-choice-btn" data-value="' + escapeForAttr(ja) + '" onclick="handleExQuizChoiceClick(this)">'
       + escapeHtml(ja) + '</button>';
@@ -1102,8 +1159,7 @@ function renderExQuizQuestion(item, choices) {
 
   var html = ''
     + '<div class="quiz-question-sentence">' + escapeHtml(item.english) + '</div>'
-    + '<div class="quiz-question-source">出典: <strong>' + escapeHtml(item.word.word) + '</strong>'
-    + (posLabel ? ' <span class="pos-badge">' + escapeHtml(posLabel) + '</span>' : '') + '</div>'
+    + sourceHtml
     + '<div class="quiz-choices">' + choiceButtons + '</div>'
     + '<div class="quiz-feedback" id="quizFeedback"></div>';
 
@@ -1120,7 +1176,10 @@ function handleExQuizChoiceClick(clickedBtn) {
   var correct = quizState.currentExample.japanese;
   var isCorrect = (selected === correct);
 
-  recordQuizResult(quizState.currentWord.id, isCorrect);
+  // 単語リンク例文のみ成績を記録する（独立例文には対応単語がないためスキップ）
+  if (quizState.currentWord) {
+    recordQuizResult(quizState.currentWord.id, isCorrect);
+  }
 
   // ボタンに正解・不正解の色を付ける
   var allBtns = document.querySelectorAll('.quiz-choice-btn');
